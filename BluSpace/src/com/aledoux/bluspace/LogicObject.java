@@ -12,7 +12,7 @@ public abstract class LogicObject implements Updateable {
 	private static ArrayList<Updateable> ALL_LOGIC; //all the updateable objects in the WHOLE game should be in this list
 	private static ArrayList<Updateable> LOGIC_TO_DESTROY; //all updateable objects that need to be destroyed
 	
-	private int updatePriority = 0; //default = LOWEST PRIORITY
+	public int updatePriority = 0; //default = LOWEST PRIORITY
 	
 	public LogicObject(){
 		getLogic().add(this);

@@ -14,7 +14,7 @@ public abstract class RenderObject implements Renderable {
 	private static ArrayList<Renderable> ALL_RENDERABLES; //all the renderable objects in the WHOLE game should be in this list
 	private static ArrayList<Renderable> RENDERABLES_TO_DESTROY; //all renderable objects that need to be destroyed
 	
-	private int renderPriority = 0; //default = LOWEST PRIORITY
+	public int renderPriority = 0; //default = LOWEST PRIORITY
 	
 	public Vector pos;
 	
