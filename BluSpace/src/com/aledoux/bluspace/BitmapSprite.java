@@ -5,7 +5,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.util.Log;
 
 /**
  * Sprite that uses bitmap images stored in resources
@@ -23,7 +22,7 @@ public class BitmapSprite extends Sprite {
  	}
 	
 	@Override
-	public void draw(Canvas canvas, Vector pos) {
+	public void draw(Canvas canvas, Point pos) {
 		canvas.drawBitmap(bitmap, pos.x - bitmap.getWidth()/2, pos.y - bitmap.getHeight()/2, new Paint());
 	}
 	

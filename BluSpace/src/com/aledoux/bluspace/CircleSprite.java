@@ -29,7 +29,7 @@ public class CircleSprite extends Sprite {
 	}
 
 	@Override
-	public void draw(Canvas canvas, Vector pos) {
+	public void draw(Canvas canvas, Point pos) {
 		canvas.drawCircle(pos.x, pos.y, radius, paint);
 	}
 }

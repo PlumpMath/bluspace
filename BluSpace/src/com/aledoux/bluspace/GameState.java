@@ -31,7 +31,7 @@ public class GameState {
 	/**
 	 * SCREEN VARIABLES
 	 */
-	//size of the screen
+	//size of the screen (represented as a Vector)
 	Vector ScreenSize;
 	//camera
 	public Camera camera;
@@ -44,7 +44,7 @@ public class GameState {
 	//have we received a touch input this frame? last frame
 	private boolean touched, prevTouched;
 	//the last location that was touched
-	public Vector lastTouch;
+	public Point lastTouch;
 	//the last times the screen was touched
 	public long touchTime, prevTouchTime;
 	//the time delay needed for something to count as a distinct tap OR a long press (in milliseconds)
@@ -176,7 +176,7 @@ public class GameState {
 	 */
 	public void touchInput(int x, int y){
 		//update record of last touch position
-		lastTouch = new Vector(x,y);
+		lastTouch = new Point(x,y);
 		//note that we've been touched
 		touched = true;
 		//note time we've been touched

@@ -24,7 +24,7 @@ public class MainGameLogic extends LogicObject {
 	 */
 	public void OnStart(){
 		//create the space background and put its priority behind everything else
-		new Background(R.drawable.spaceback_sml,GameState.State().ScreenSize.div(2),-1);
+		new Background(R.drawable.spaceback_sml,new Point(GameState.State().ScreenSize.div(2)),-1);
 		
 		hasStarted = true;
 	}
@@ -37,7 +37,7 @@ public class MainGameLogic extends LogicObject {
 		
 		//once the screen loads, create the player at the center of the screen
 		if (player == null && GameState.State().ScreenSize != null){
-			player = new Spaceship(GameState.State().ScreenSize.div(2));
+			player = new Spaceship(new Point(GameState.State().ScreenSize.div(2)));
 		}
 		
 		//once the player exists, create the target circle

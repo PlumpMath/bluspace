@@ -10,7 +10,7 @@ public class Vector {
 	public float x,y;
 	
 	/**
-	 * create a vector from global origin
+	 * create a vector with x and y displacement
 	 * @param x
 	 * @param y
 	 */
@@ -20,14 +20,21 @@ public class Vector {
 	}
 	
 	/**
-	 * Create a vector using one vector to point towards the origin
-	 * and other to point towards its end point
+	 * Create a vector using from the displacement of a starting point to an end point
 	 * @param origin
 	 * @param end
 	 */
-	public Vector(Vector origin, Vector end){
+	public Vector(Point origin, Point end){
 		this.x = end.x - origin.x;
 		this.y = end.y - origin.y;
+	}
+	
+	/**
+	 * Create a vector from the displacement from the origin to an end point
+	 * @param angle
+	 */
+	public Vector(Point end){
+		this(Point.ORIGIN,end);
 	}
 	
 	public Vector(float angle){
@@ -54,7 +61,7 @@ public class Vector {
 	
 	//return the magnitude of the vector
 	public float mag(){
-		return Vector.Distance(new Vector(0,0), this);
+		return Point.Distance(Point.ORIGIN, new Point(this));
 	}
 	
 	//return the unit vector (magnitude = 1)
@@ -67,9 +74,17 @@ public class Vector {
 		}
 	}
 	
+	//returns a vector perendictular (90 degrees from) the original
+	public Vector perp(){
+		return new Vector(-this.y, this.x);
+	}
+	
 	//scalar cross product (like Jarek taught us ;) )
+	//public float cross(Vector other){
+		//return (this.x * other.y) + (-this.y * other.x);
+	//}
 	public float cross(Vector other){
-		return (this.x * other.y) + (-this.y * other.x);
+		return (this.perp()).dot(other);
 	}
 	
 	//dot product
@@ -77,7 +92,12 @@ public class Vector {
 		return (this.x * other.x) + (this.y * other.y);
 	}
 	
-	public static float Distance(Vector a, Vector b){
-		return android.util.FloatMath.sqrt((float) (Math.pow((a.x - b.x),2) + Math.pow((a.y - b.y),2)));
+	//static methods
+	public static float Dot(Vector a, Vector b){
+		return a.dot(b);
+	}
+	
+	public static float Cross(Vector a, Vector b){
+		return a.cross(b);
 	}
 }

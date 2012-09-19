@@ -16,7 +16,7 @@ public abstract class GameObject implements Renderable, Updateable {
 	public int updatePriority = 0;//default = LOWEST PRIORITY
 	public int renderPriority = 0;//default = LOWEST PRIORITY
 	
-	public Vector pos; //current position of the game object
+	public Point pos; //current position of the game object
 	
 	public GameObject(){
 		//getGameObjects().add(this); //always add new game objects to the global game object list

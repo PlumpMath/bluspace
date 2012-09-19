@@ -8,7 +8,7 @@ public class Laser extends GameObject {
 	float lifeSpan, lifeCount;
 	CircleSprite sprite;
 	
-	public Laser(Vector pos, Vector velocity){
+	public Laser(Point pos, Vector velocity){
 		this.pos = pos;
 		this.velocity = velocity;
 		this.lifeSpan = 1; //max length of life in seconds
@@ -21,7 +21,7 @@ public class Laser extends GameObject {
 		lifeCount += GameState.State().deltaTime();
 		
 		//move the laser
-		pos = pos.add(velocity.mult(GameState.State().deltaTime()));
+		pos = pos.move(velocity.mult(GameState.State().deltaTime()));
 		
 		//if it goes off screen, push it around to the other side
 		Vector ss = GameState.State().ScreenSize;

@@ -15,5 +15,5 @@ import android.graphics.Canvas;
  *
  */
 public abstract class Sprite {
-	public abstract void draw(Canvas canvas, Vector pos);
+	public abstract void draw(Canvas canvas, Point pos);
 }

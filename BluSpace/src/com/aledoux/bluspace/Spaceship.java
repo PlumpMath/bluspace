@@ -12,14 +12,14 @@ public class Spaceship extends GameObject {
 	float rotationSpeed; //degrees per second
 	Vector heading; //a unit vector representing the direction the ship is heading
 	Vector velocity; //what's the speed of the spaceship?
-	public Vector target; //what's the target position for the spaceship?
+	public Point target; //what's the target position for the spaceship?
 	float frictionForce; //how strong is friction?
 	
 	public Spaceship(int x, int y){
-		this(new Vector(x,y));
+		this(new Point(x,y));
 	}
 	
-	public Spaceship(Vector pos){
+	public Spaceship(Point pos){
 		this.pos = pos;
 		speed = 100f; //how many pixels we move per second
 		thrustSpeed = 20;
@@ -37,7 +37,7 @@ public class Spaceship extends GameObject {
 	}
 	
 	public void update(){
-		Vector touch = GameState.State().lastTouch;
+		Point touch = GameState.State().lastTouch;
 		
 		//if the screen is tapped
 		if (GameState.State().screenTapped()){
@@ -57,7 +57,7 @@ public class Spaceship extends GameObject {
 		//if we have a target
 		if (target != null){
 			//rotate toward target
-			rotationAngle = sprite.rotateTowards(new Vector(pos, pos.add(heading)), new Vector(pos, target), rotationSpeed*GameState.State().deltaTime(), 10);
+			rotationAngle = sprite.rotateTowards(new Vector(pos, pos.move(heading)), new Vector(pos, target), rotationSpeed*GameState.State().deltaTime(), 10);
 			
 			//update heading
 			heading = new Vector(rotationAngle-90); //the negative 90 has to do with something weird in the android coord system
@@ -67,7 +67,7 @@ public class Spaceship extends GameObject {
 		velocity = velocity.sub(velocity.unit().mult(frictionForce).mult(GameState.State().deltaTime()));
 		
 		//update position based on velocity
-		pos = pos.add(velocity.mult(GameState.State().deltaTime()));
+		pos = pos.move(velocity.mult(GameState.State().deltaTime()));
 		
 		//if the ship goes of the screen wrap it around
 		Vector ss = GameState.State().getScreenSize();
@@ -83,7 +83,7 @@ public class Spaceship extends GameObject {
 	public void render(Canvas canvas) {
 		//draw "exhaust"
 		if (GameState.State().screenTapped()){
-			(new CircleSprite(10,Color.argb(255,255,0,0))).draw(canvas, pos.sub(heading.mult(15)));
+			(new CircleSprite(10,Color.argb(255,255,0,0))).draw(canvas, pos.move(heading.mult(-15)));
 		}
 		
 		sprite.draw(canvas,pos);
@@ -111,8 +111,8 @@ public class Spaceship extends GameObject {
 	 * @param radius
 	 * @return
 	 */
-	public boolean collision(Vector p, float radius){
-		return Vector.Distance(pos, p) < radius;
+	public boolean collision(Point p, float radius){
+		return Point.Distance(pos, p) < radius;
 	}
 	
 	public int width(){

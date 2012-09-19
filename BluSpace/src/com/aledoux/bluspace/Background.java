@@ -7,7 +7,7 @@ public class Background extends RenderObject {
 
 	BitmapSprite sprite;
 	
-	public Background(int picId, Vector pos, int renderPriority){
+	public Background(int picId, Point pos, int renderPriority){
 		this.sprite = new BitmapSprite(picId);
 		this.pos = pos;
 		this.renderPriority = renderPriority;

@@ -16,7 +16,7 @@ public abstract class RenderObject implements Renderable {
 	
 	public int renderPriority = 0; //default = LOWEST PRIORITY
 	
-	public Vector pos;
+	public Point pos;
 	
 	public RenderObject(){
 		getRenderables().add(this);
