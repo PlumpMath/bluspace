@@ -8,7 +8,7 @@ package com.aledoux.bluspace;
 public class Point {
 	public static final Point ORIGIN = new Point(0,0); //the origin of the 2D plane
 	
-	public float x,y;
+	private float x,y;
 	
 	/**
 	 * create a point given an x and a y
