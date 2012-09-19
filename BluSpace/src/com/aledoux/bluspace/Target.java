@@ -6,16 +6,18 @@ import android.graphics.Paint;
 
 public class Target extends GameObject {
 	CircleSprite sprite;
+	Spaceship player; //the player this target belongs to
 	
-	public Target(){
+	public Target(Spaceship player){
+		this.player = player;
 		sprite = new CircleSprite(20,Color.argb(255,255,255,255));
 		sprite.setStyle(Paint.Style.STROKE);
 	}
 	
 	@Override
 	public void update() {
-		if (GameState.State().screenTouched()){
-			pos = GameState.State().lastTouch;
+		if (player.target != null){
+			pos = player.target;
 		}
 	}
 

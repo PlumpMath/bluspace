@@ -40,9 +40,9 @@ public class MainGameLogic extends LogicObject {
 			player = new Spaceship(GameState.State().ScreenSize.div(2));
 		}
 		
-		//once the player touches the screen, create the target circle
-		if (target == null && GameState.State().lastTouch != null){
-			target = new Target();
+		//once the player exists, create the target circle
+		if (target == null && player != null){
+			target = new Target(player);
 		}
 	}
 

@@ -5,23 +5,23 @@ import android.graphics.Color;
 
 public class Laser extends GameObject {
 	Vector velocity;
-	long lifeSpan, lifeCount;
+	float lifeSpan, lifeCount;
 	CircleSprite sprite;
 	
 	public Laser(Vector pos, Vector velocity){
 		this.pos = pos;
 		this.velocity = velocity;
-		this.lifeSpan = 1000; //max length of life in milliseconds
+		this.lifeSpan = 1; //max length of life in seconds
 		this.lifeCount = 0; //total time alive
 		this.sprite = new CircleSprite(2,Color.argb(255,255,255,255));
 	}
 	
 	public void update(){
 		//update life count
-		lifeCount += GameState.State().deltaTime;
+		lifeCount += GameState.State().deltaTime();
 		
 		//move the laser
-		pos = pos.add(velocity.mult(GameState.State().deltaTimeSec()));
+		pos = pos.add(velocity.mult(GameState.State().deltaTime()));
 		
 		//if it goes off screen, push it around to the other side
 		Vector ss = GameState.State().ScreenSize;

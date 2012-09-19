@@ -1,6 +1,7 @@
 package com.aledoux.bluspace;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 
 /**
@@ -17,6 +18,10 @@ public class CircleSprite extends Sprite {
 		this.radius = radius;
 		this.paint = new Paint();
 		this.paint.setColor(color);
+	}
+	
+	public CircleSprite(){ //auto circle - mainly for debugging
+		this(3, Color.argb(255, 255, 255, 255));
 	}
 	
 	public void setStyle(Paint.Style style){

@@ -25,7 +25,7 @@ public class GameState {
 	 */
 	private static GameState GAME_STATE; //current state of the game (singleton pattern)
 	private LogicObject mainLogic; //the main logic object for the current game state
-	public long deltaTime; //time between current frame and previous frame (in milliseconds)
+	private long deltaTime; //time between current frame and previous frame (in milliseconds)
 	private long prevFrameTime; //time the previous frame occurred
 	
 	/**
@@ -227,7 +227,7 @@ public class GameState {
 	/**
 	 * @return time between current frame and last frame (in seconds)
 	 */
-	public float deltaTimeSec(){
+	public float deltaTime(){
 		return deltaTime/1000f;
 	}
 }
