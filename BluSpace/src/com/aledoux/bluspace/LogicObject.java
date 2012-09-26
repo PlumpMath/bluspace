@@ -73,5 +73,22 @@ public abstract class LogicObject implements Updateable {
 		UpdateQueue.addAll(getLogic());
 		return UpdateQueue;
 	}
+	
+	/**
+	 * Get a list of all logic objects of a certain type
+	 * @param objType
+	 * @return
+	 */
+	public static <T> ArrayList<T> allObjectsOfType(Class<T> objType){
+		ArrayList<T> typeList = new ArrayList<T>();
+		
+		for (Updateable u : LogicObject.getLogic()){
+			if (u.getClass() == objType){
+				typeList.add((T) u);
+			}
+		}
+		
+		return typeList;
+	}
 
 }

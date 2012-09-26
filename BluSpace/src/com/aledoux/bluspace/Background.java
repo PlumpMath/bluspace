@@ -17,5 +17,13 @@ public class Background extends RenderObject {
 	public void render(Canvas canvas) {
 		sprite.draw(canvas,pos);
 	}
+	
+	public int GetHeight(){
+		return sprite.getHeight();
+	}
+	
+	public int GetWidth(){
+		return sprite.getWidth();
+	}
 
 }

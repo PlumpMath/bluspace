@@ -1,5 +1,7 @@
 package com.aledoux.bluspace;
 
+import java.util.ArrayList;
+
 import android.graphics.Canvas;
 
 /**
@@ -11,7 +13,7 @@ import android.graphics.Canvas;
  * @author adamrossledoux
  *
  */
-public abstract class GameObject implements Renderable, Updateable {	
+public abstract class GameObject implements Renderable, Updateable {
 	//priorities
 	public int updatePriority = 0;//default = LOWEST PRIORITY
 	public int renderPriority = 0;//default = LOWEST PRIORITY
@@ -19,7 +21,6 @@ public abstract class GameObject implements Renderable, Updateable {
 	public Point pos; //current position of the game object
 	
 	public GameObject(){
-		//getGameObjects().add(this); //always add new game objects to the global game object list
 		RenderObject.getRenderables().add(this);
 		LogicObject.getLogic().add(this);
 	}
@@ -40,8 +41,16 @@ public abstract class GameObject implements Renderable, Updateable {
 	 * mark a game object for destruction
 	 */
 	public static void destroy(GameObject g){
-		//getDestroyList().add(this);
 		RenderObject.destroy(g);
 		LogicObject.destroy(g);
+	}
+	
+	/**
+	 * Get a list of all game objects of a certain type
+	 * @param objType
+	 * @return
+	 */
+	public static <T> ArrayList<T> allObjectsOfType(Class<T> objType){
+		return LogicObject.allObjectsOfType(objType); //uses the logic object method in the background
 	}
 }

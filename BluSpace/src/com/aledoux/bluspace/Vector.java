@@ -37,10 +37,23 @@ public class Vector {
 		this(Point.ORIGIN,end);
 	}
 	
+	/**
+	 * create a vector from the values of a line at that angle that is of length one (on the unit circle)
+	 * @param angle
+	 */
 	public Vector(float angle){
 		float radians = (float) Math.toRadians(angle);
 		this.x = android.util.FloatMath.cos(radians);
 		this.y = android.util.FloatMath.sin(radians);
+	}
+	
+	/**
+	 * copy a vector
+	 * @param other
+	 * @return
+	 */
+	public Vector(Vector toCopy){
+		this(toCopy.x, toCopy.y);
 	}
 	
 	public Vector add(Vector other){

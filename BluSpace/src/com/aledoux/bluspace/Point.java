@@ -41,11 +41,26 @@ public class Point {
 	}
 	
 	/**
+	 * automatically create a copy of the origin
+	 */
+	public Point() {
+		this(ORIGIN.x,ORIGIN.y);
+	}
+	
+	/**
+	 * copy the point
+	 * @param toCopy
+	 */
+	public Point(Point toCopy){
+		this(toCopy.x, toCopy.y);
+	}
+
+	/**
 	 * displaces a point by a vector and returns the new position
 	 * @param v
 	 * @return the resulting point
 	 */
-	public Point move(Vector v){
+	public Point translate(Vector v){
 		return new Point(this,v);
 	}
 	

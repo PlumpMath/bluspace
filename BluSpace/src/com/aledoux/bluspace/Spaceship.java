@@ -37,27 +37,32 @@ public class Spaceship extends GameObject {
 	}
 	
 	public void update(){
-		Point touch = GameState.State().lastTouch;
-		
 		//if the screen is tapped
 		if (GameState.State().screenTapped()){
+			Point touch = GameState.State().lastTouch.translate(new Vector(GameState.State().GetCameraPosition()));
+			//touch position has to be adjusted to be relative to the camera
+			
 			//if the tap is WITHIN A 75 PIXEL RADIUS of the spaceship
 			if (collision(touch,75)){
 				//shoot a laser forward
 				new Laser(pos, heading.mult(shootSpeed));
+				//play laser sound
+				GameState.State().PlaySound("shoot");
 			}
 			else{ //if the tap is elsewhere on the screen
 				//set this location as the target
 				target = touch;
 				//and increase the velocity of the spaceship (in the forward direction)
 				velocity = velocity.add(heading.mult(thrustSpeed));
+				//play acceleration sound
+				GameState.State().PlaySound("accelerate");
 			}
 		}
 		
 		//if we have a target
 		if (target != null){
 			//rotate toward target
-			rotationAngle = sprite.rotateTowards(new Vector(pos, pos.move(heading)), new Vector(pos, target), rotationSpeed*GameState.State().deltaTime(), 10);
+			rotationAngle = sprite.rotateTowards(new Vector(pos, pos.translate(heading)), new Vector(pos, target), rotationSpeed*GameState.State().deltaTime(), 10);
 			
 			//update heading
 			heading = new Vector(rotationAngle-90); //the negative 90 has to do with something weird in the android coord system
@@ -67,8 +72,9 @@ public class Spaceship extends GameObject {
 		velocity = velocity.sub(velocity.unit().mult(frictionForce).mult(GameState.State().deltaTime()));
 		
 		//update position based on velocity
-		pos = pos.move(velocity.mult(GameState.State().deltaTime()));
+		pos = pos.translate(velocity.mult(GameState.State().deltaTime()));
 		
+		/**
 		//if the ship goes of the screen wrap it around
 		Vector ss = GameState.State().getScreenSize();
 		if (pos.x < 0 || pos.x > ss.x){
@@ -77,13 +83,14 @@ public class Spaceship extends GameObject {
 		if (pos.y < 0 || pos.y > ss.y){
 			pos.y = Math.abs(pos.y - ss.y);
 		}
+		**/
 	}
 
 	@Override
 	public void render(Canvas canvas) {
 		//draw "exhaust"
 		if (GameState.State().screenTapped()){
-			(new CircleSprite(10,Color.argb(255,255,0,0))).draw(canvas, pos.move(heading.mult(-15)));
+			(new CircleSprite(10,Color.argb(255,255,0,0))).draw(canvas, pos.translate(heading.mult(-15)));
 		}
 		
 		sprite.draw(canvas,pos);

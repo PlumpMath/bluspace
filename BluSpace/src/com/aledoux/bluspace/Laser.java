@@ -1,9 +1,13 @@
 package com.aledoux.bluspace;
 
+import java.util.ArrayList;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 
 public class Laser extends GameObject {
+	public static ArrayList<Laser> ALL_LASERS = new ArrayList<Laser>();
+	
 	Vector velocity;
 	float lifeSpan, lifeCount;
 	CircleSprite sprite;
@@ -21,8 +25,9 @@ public class Laser extends GameObject {
 		lifeCount += GameState.State().deltaTime();
 		
 		//move the laser
-		pos = pos.move(velocity.mult(GameState.State().deltaTime()));
+		pos = pos.translate(velocity.mult(GameState.State().deltaTime()));
 		
+		/**
 		//if it goes off screen, push it around to the other side
 		Vector ss = GameState.State().ScreenSize;
 		if (pos.x < 0){
@@ -37,6 +42,7 @@ public class Laser extends GameObject {
 		else if (pos.y > ss.y){
 			pos.y = 0;
 		}
+		**/
 		
 		//if the laser has existed for too long, destroy it
 		if (lifeCount > lifeSpan){

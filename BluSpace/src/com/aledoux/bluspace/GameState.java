@@ -1,16 +1,22 @@
 package com.aledoux.bluspace;
 
 import java.util.Date;
+import java.util.Dictionary;
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.PriorityQueue;
 
 import android.content.Context;
 import android.graphics.Camera;
 import android.graphics.Canvas;
+import android.util.Log;
+import android.media.AudioManager;
+import android.media.SoundPool;
 
 /**
  * Stores all the logic for the game
  * draws it onto the canvas,
- * and recieves input from the screen.
+ * and receives input from the screen.
  * 
  * GameState follows a singleton pattern,
  * so that as long as the app is open
@@ -34,7 +40,8 @@ public class GameState {
 	//size of the screen (represented as a Vector)
 	Vector ScreenSize;
 	//camera
-	public Camera camera;
+	private Camera camera;
+	private Point cameraPosition, prevCameraPosition;
 	//context
 	public Context context;
 	
@@ -52,6 +59,13 @@ public class GameState {
 	//when was the last time a touch was lifted?
 	public long lastLiftTime;
 	
+	/**
+	 * AUDIO VARIABLES
+	 */
+	private SoundPool soundPool;
+	private float volume;
+	private Hashtable<String,Integer> soundTable;
+	
 	public GameState(){
 		gameStateStartValues();
 	}
@@ -64,6 +78,10 @@ public class GameState {
 		camera = new Camera();
 		prevFrameTime = (new Date()).getTime();
 		deltaTime = 0;
+		cameraPosition = new Point();
+		soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 0);
+		volume = 0.9f; //90 percent sound volume
+		soundTable = new Hashtable<String,Integer>();
 		
 		//null values
 		lastTouch = null;
@@ -118,6 +136,9 @@ public class GameState {
 	}
 	
 	public void update(){
+		//update previous camera position
+		prevCameraPosition = new Point(cameraPosition);
+		
 		//update all updateable game logic objects
 		PriorityQueue<Updateable> queue = LogicObject.getUpdateQueue();
 		while (!queue.isEmpty()){
@@ -129,6 +150,11 @@ public class GameState {
 		
 		//update touch status variables
 		updateTouchStatus();
+		
+		//update camera
+		Vector cameraTrans = new Vector(prevCameraPosition, cameraPosition);
+		cameraTrans.x = -cameraTrans.x; //android's coordinate system works is backwards
+		camera.translate(cameraTrans.x, cameraTrans.y, 0);
 		
 		//update time step
 		deltaTime = (new Date()).getTime() - prevFrameTime;
@@ -229,5 +255,40 @@ public class GameState {
 	 */
 	public float deltaTime(){
 		return deltaTime/1000f;
+	}
+	
+	//CAMERA METHODS
+	public Point GetCameraPosition(){
+		return cameraPosition;
+	}
+	
+	public void SetCameraPosition(float x, float y){
+		cameraPosition.x = x;
+		cameraPosition.y = y;
+	}
+	
+	public void SetCameraPosition(Point pos){
+		cameraPosition = pos;
+	}
+	
+	public void MoveCamera(Vector displacement){
+		cameraPosition = cameraPosition.translate(displacement);
+	}
+	
+	public void MoveCamera(float x, float y){
+		MoveCamera(new Vector(x,y));
+	}
+	
+	public void PlaySound(String name){
+		soundPool.play(soundTable.get(name), volume, volume, 1, 0, 1f);
+	}
+	
+	public void LoopSound(String name){
+		soundPool.play(soundTable.get(name), volume, volume, 1, -1, 1f);
+	}
+	
+	public void LoadSound(int resID, String name){
+		Log.i("load","loading sounds");
+		soundTable.put(name, soundPool.load(context, resID, 1));
 	}
 }
