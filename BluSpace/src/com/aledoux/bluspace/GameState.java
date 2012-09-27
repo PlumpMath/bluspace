@@ -153,7 +153,7 @@ public class GameState {
 		
 		//update camera
 		Vector cameraTrans = new Vector(prevCameraPosition, cameraPosition);
-		cameraTrans.x = -cameraTrans.x; //android's coordinate system works is backwards
+		cameraTrans.x = -cameraTrans.x; //android's coordinate system is backwards on the x axis
 		camera.translate(cameraTrans.x, cameraTrans.y, 0);
 		
 		//update time step

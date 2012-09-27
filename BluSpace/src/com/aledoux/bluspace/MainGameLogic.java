@@ -43,6 +43,10 @@ public class MainGameLogic extends LogicObject {
 		//create a target reticule for the player
 		target = new Target(player);
 		
+		//debug
+		//create explosion
+		new Explosion(new Point(0,0));
+		
 		//load sounds
 		GameState.State().LoadSound(R.raw.shoot, "shoot");
 		GameState.State().LoadSound(R.raw.accelerate, "accelerate");
