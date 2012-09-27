@@ -13,6 +13,12 @@ import android.util.Log;
 import android.media.AudioManager;
 import android.media.SoundPool;
 
+import android.graphics.Paint;
+import android.graphics.Color;
+
+
+import android.view.MotionEvent;
+
 /**
  * Stores all the logic for the game
  * draws it onto the canvas,
@@ -51,13 +57,14 @@ public class GameState {
 	//have we received a touch input this frame? last frame
 	private boolean touched, prevTouched;
 	//the last location that was touched
-	public Point lastTouch;
+	public Point lastTouch, firstTouch;
 	//the last times the screen was touched
 	public long touchTime, prevTouchTime;
 	//the time delay needed for something to count as a distinct tap OR a long press (in milliseconds)
 	public long tapInterval, pressInterval;
 	//when was the last time a touch was lifted?
 	public long lastLiftTime;
+	public Paint paint;
 	
 	/**
 	 * AUDIO VARIABLES
@@ -78,10 +85,15 @@ public class GameState {
 		camera = new Camera();
 		prevFrameTime = (new Date()).getTime();
 		deltaTime = 0;
+
+		paint = new Paint();
+
 		cameraPosition = new Point();
 		soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 0);
 		volume = 0.9f; //90 percent sound volume
 		soundTable = new Hashtable<String,Integer>();
+		
+		paint.setColor(Color.WHITE);
 		
 		//null values
 		lastTouch = null;
@@ -153,7 +165,7 @@ public class GameState {
 		
 		//update camera
 		Vector cameraTrans = new Vector(prevCameraPosition, cameraPosition);
-		cameraTrans.x = -cameraTrans.x; //android's coordinate system is backwards on the x axis
+		cameraTrans.x = -cameraTrans.x; //android's coordinate system works is backwards
 		camera.translate(cameraTrans.x, cameraTrans.y, 0);
 		
 		//update time step
@@ -173,6 +185,21 @@ public class GameState {
 		while (!queue.isEmpty()){
 			queue.poll().render(canvas);
 		}
+		
+		
+		/**
+		 * Draws the line we move ourselves with.
+		 * @author Sean Wheeler
+		 */
+		if(firstTouch != null && lastTouch != null && touched == true)
+		{
+			canvas.drawLine(firstTouch.x+GetCameraPosition().x, firstTouch.y+GetCameraPosition().y, lastTouch.x+GetCameraPosition().x, lastTouch.y+GetCameraPosition().y, paint);
+			
+			System.out.println("firstX: "+firstTouch.x); 
+			System.out.println("firstY: "+firstTouch.y);
+			System.out.println("X: "+GetCameraPosition().x); 
+			System.out.println("Y: "+GetCameraPosition().y);
+		}
 	}
 	
 	/**
@@ -191,7 +218,15 @@ public class GameState {
 			prevTouchTime = touchTime;
 		}
 		prevTouched = touched; //save the state of the last frame's touched variable
-		touched = false; //set the current state's touched variable to false (innocent until proven guilty)
+		
+		
+		/**
+		 * I commented this out so we can try the toggle system
+		 * @author Sean Wheeler
+		 */
+		//touched = false; //set the current state's touched variable to false (innocent until proven guilty)
+		
+		
 	}
 
 	
@@ -200,14 +235,55 @@ public class GameState {
 	 * @param x
 	 * @param y
 	 */
-	public void touchInput(int x, int y){
+//	public void touchInput(int x, int y){
+//		//update record of last touch position
+//		lastTouch = new Point(x,y);
+//		//note that we've been touched
+//		touched = true;
+//		//note time we've been touched
+//		touchTime = new Date().getTime();
+//		
+//		if (prevTouched == false)
+//		{
+//			firstTouch = new Point(x,y);
+//		}
+//		
+//	}
+	
+	public void touchInput(MotionEvent event){
+		
+		int x = (int) event.getX();
+		int y = (int) event.getY();
 		//update record of last touch position
 		lastTouch = new Point(x,y);
 		//note that we've been touched
 		touched = true;
+		
+		/**
+		 * I put this here to toggle touched as a boolean
+		 * @author Sean Wheeler
+		 */
+		if (event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL)
+		{
+			touched = false;
+		}
+		
 		//note time we've been touched
 		touchTime = new Date().getTime();
+		
+		/**
+		 * This creates a point for our touch drag movement
+		 * @author Sean Wheeler
+		 */
+		if (prevTouched == false && event.getActionMasked() == MotionEvent.ACTION_DOWN)
+		{
+			firstTouch = new Point(x,y);
+		}
+		
 	}
+	
+	
+	
 	
 	/**
 	 * True if the user has waited long enough between touches

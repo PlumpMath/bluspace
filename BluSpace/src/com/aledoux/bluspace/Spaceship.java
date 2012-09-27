@@ -38,8 +38,9 @@ public class Spaceship extends GameObject {
 	
 	public void update(){
 		//if the screen is tapped
+		Point touch = null;
 		if (GameState.State().screenTapped()){
-			Point touch = GameState.State().lastTouch.translate(new Vector(GameState.State().GetCameraPosition()));
+			touch = GameState.State().lastTouch.translate(new Vector(GameState.State().GetCameraPosition()));
 			//touch position has to be adjusted to be relative to the camera
 			
 			//if the tap is WITHIN A 75 PIXEL RADIUS of the spaceship
@@ -51,11 +52,29 @@ public class Spaceship extends GameObject {
 			}
 			else{ //if the tap is elsewhere on the screen
 				//set this location as the target
-				target = touch;
-				//and increase the velocity of the spaceship (in the forward direction)
-				velocity = velocity.add(heading.mult(thrustSpeed));
-				//play acceleration sound
-				GameState.State().PlaySound("accelerate");
+//				target = touch;
+//				//and increase the velocity of the spaceship (in the forward direction)
+//				velocity = velocity.add(heading.mult(thrustSpeed));
+//				//play acceleration sound
+//				GameState.State().PlaySound("accelerate");
+			}
+		}
+//		
+		/**
+		 * This is the new move method that follows the vector drawing idea
+		 * @author Sean Wheeler
+		 */
+		if (GameState.State().screenTouched())
+		{
+			Vector moveVec = (new Vector(GameState.State().firstTouch,GameState.State().lastTouch));
+			Vector from = new Vector(pos, pos.translate(heading));
+			Vector to =  new Vector(pos, pos.translate(moveVec));
+			rotationAngle = sprite.rotateTowards(from, to, rotationSpeed*GameState.State().deltaTime(), 10);
+			heading = new Vector(rotationAngle-90); //the negative 90 has to do with something weird in the android coord system
+			//GameState.State().PlaySound("accelerate");
+			if (velocity.mag() < 400)
+			{
+				velocity = velocity.add(moveVec.unit().mult(thrustSpeed));
 			}
 		}
 		

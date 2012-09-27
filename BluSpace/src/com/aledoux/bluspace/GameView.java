@@ -93,13 +93,26 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 	}
 
 	public boolean onTouch(View v, MotionEvent event) {
-		int touchX = (int) event.getX();
-		int touchY = (int) event.getY();
+		
+		
+		GameState.State().touchInput(event);
 		
 		//send the touch input to the game's logic
-		GameState.State().touchInput(touchX, touchY);
+		
 		
 		return true;
 	}
+	
+//	public boolean onTouch(View v, MotionEvent event) {
+//		int touchX = (int) event.getX();
+//		int touchY = (int) event.getY();
+//		
+//		GameState.State().touchInput(touchX, touchY);
+//		
+//		//send the touch input to the game's logic
+//		
+//		
+//		return true;
+//	}
 	
 }
