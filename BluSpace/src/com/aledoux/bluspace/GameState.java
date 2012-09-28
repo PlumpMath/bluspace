@@ -190,7 +190,7 @@ public class GameState {
 		
 		
 		/**
-		 * Draws the line we move ourselves with.
+		 * Draws the line we move ourselves with. I DID THIS
 		 * @author Sean Wheeler
 		 */
 		if(firstTouch != null && lastTouch != null && touched == true)
