@@ -71,7 +71,8 @@ public class GameState {
 	 */
 	private SoundPool soundPool;
 	private float volume;
-	private Hashtable<String,Integer> soundTable;
+	private Hashtable<String,Integer> soundTable; //use names to get soundIDs
+	private Hashtable<String,Integer> streamTable; //use names to get streamIDs
 	
 	public GameState(){
 		gameStateStartValues();
@@ -92,6 +93,7 @@ public class GameState {
 		soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 0);
 		volume = 0.9f; //90 percent sound volume
 		soundTable = new Hashtable<String,Integer>();
+		streamTable = new Hashtable<String,Integer>();
 		
 		paint.setColor(Color.WHITE);
 		
@@ -356,11 +358,15 @@ public class GameState {
 	}
 	
 	public void PlaySound(String name){
-		soundPool.play(soundTable.get(name), volume, volume, 1, 0, 1f);
+		streamTable.put(name, soundPool.play(soundTable.get(name), volume, volume, 1, 0, 1f));
 	}
 	
 	public void LoopSound(String name){
-		soundPool.play(soundTable.get(name), volume, volume, 1, -1, 1f);
+		streamTable.put(name, soundPool.play(soundTable.get(name), volume, volume, 1, -1, 1f));
+	}
+	
+	public void StopSound(String name){
+		soundPool.stop(streamTable.get(name));
 	}
 	
 	public void LoadSound(int resID, String name){

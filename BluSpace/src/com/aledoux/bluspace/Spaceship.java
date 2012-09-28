@@ -14,6 +14,7 @@ public class Spaceship extends GameObject {
 	Vector velocity; //what's the speed of the spaceship?
 	public Point target; //what's the target position for the spaceship?
 	float frictionForce; //how strong is friction?
+	private boolean enginesRunning; //are the engines being used (are we increasing velocity)?
 	
 	public Spaceship(int x, int y){
 		this(new Point(x,y));
@@ -30,6 +31,7 @@ public class Spaceship extends GameObject {
 		heading = new Vector(rotationAngle-90); //the negative 90 has to do with something weird in the android coord system
 		velocity = new Vector(0,0);
 		frictionForce = 15;
+		enginesRunning = false;
 		
 		this.sprite = new BitmapSprite(R.drawable.spaceship);
 		
@@ -60,6 +62,8 @@ public class Spaceship extends GameObject {
 			}
 		}
 //		
+		boolean wasEngineRunning = enginesRunning;
+		
 		/**
 		 * This is the new move method that follows the vector drawing idea
 		 * @author Sean Wheeler
@@ -75,7 +79,25 @@ public class Spaceship extends GameObject {
 			if (velocity.mag() < 400)
 			{
 				velocity = velocity.add(moveVec.unit().mult(thrustSpeed));
+				enginesRunning = true;
 			}
+			else{
+				enginesRunning = false;
+			}
+		}
+		else{
+			enginesRunning = false;
+		}
+		
+		if (!wasEngineRunning && enginesRunning){ //if the engines JUST STARTED
+			//fire sound
+			//GameState.State().PlaySound("accelerate");
+			//turn on engine sound
+			GameState.State().LoopSound("engine");
+		}
+		else if (wasEngineRunning && !enginesRunning){ //if the engines JUST STOPPED
+			//turn off the engine sound
+			GameState.State().StopSound("engine");
 		}
 		
 		//if we have a target
@@ -108,7 +130,7 @@ public class Spaceship extends GameObject {
 	@Override
 	public void render(Canvas canvas) {
 		//draw "exhaust"
-		if (GameState.State().screenTapped()){
+		if (enginesRunning){
 			(new CircleSprite(10,Color.argb(255,255,0,0))).draw(canvas, pos.translate(heading.mult(-15)));
 		}
 		

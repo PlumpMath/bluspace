@@ -45,11 +45,13 @@ public class MainGameLogic extends LogicObject {
 		
 		//debug
 		//create explosion
-		new Explosion(new Point(0,0));
+		new Enemy(new Point(150,150));
 		
 		//load sounds
 		GameState.State().LoadSound(R.raw.shoot, "shoot");
 		GameState.State().LoadSound(R.raw.accelerate, "accelerate");
+		GameState.State().LoadSound(R.raw.engine, "engine");
+		GameState.State().LoadSound(R.raw.explosion, "explosion");
 		
 		hasStarted = true;
 	}
