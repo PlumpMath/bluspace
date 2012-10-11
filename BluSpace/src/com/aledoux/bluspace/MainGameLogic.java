@@ -52,6 +52,7 @@ public class MainGameLogic extends LogicObject {
 		GameState.State().LoadSound(R.raw.accelerate, "accelerate");
 		GameState.State().LoadSound(R.raw.engine, "engine");
 		GameState.State().LoadSound(R.raw.explosion, "explosion");
+		GameState.State().LoadSound(R.raw.death, "death");
 		
 		hasStarted = true;
 	}

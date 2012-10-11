@@ -7,11 +7,13 @@ import java.util.Map;
 import java.util.PriorityQueue;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Camera;
 import android.graphics.Canvas;
 import android.util.Log;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.preference.PreferenceManager;
 
 import android.graphics.Paint;
 import android.graphics.Color;
@@ -74,6 +76,22 @@ public class GameState {
 	private Hashtable<String,Integer> soundTable; //use names to get soundIDs
 	private Hashtable<String,Integer> streamTable; //use names to get streamIDs
 	
+	/**
+	 * MOTION SENSOR VARIABLES
+	 */
+	private float accX, accY, accZ; //last accelerometer values
+	private float accDX, accDY, accDZ; //change in accelerometer values
+	private float accNoise; //the amount of "noise" we cut in our accelerometer changes
+	
+	/**
+	 * SETTINGS / OPTIONS VARIABLES
+	 */
+	private SharedPreferences settings;
+	public static enum ShipControl {Target, Joystick, Swipe};
+	public static enum LaserControl {Shake, TouchShip, TouchScreen};
+	private ShipControl shipMode;
+	private LaserControl laserMode;
+	
 	public GameState(){
 		gameStateStartValues();
 	}
@@ -86,20 +104,32 @@ public class GameState {
 		camera = new Camera();
 		prevFrameTime = (new Date()).getTime();
 		deltaTime = 0;
+		accNoise = 8.0f;
 
 		paint = new Paint();
 
 		cameraPosition = new Point();
 		soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 0);
-		volume = 0.9f; //90 percent sound volume
 		soundTable = new Hashtable<String,Integer>();
 		streamTable = new Hashtable<String,Integer>();
-		
+
 		paint.setColor(Color.WHITE);
 		
 		//null values
 		lastTouch = null;
 		ScreenSize = null;
+		
+		/**
+		 * SET OPTIONS
+		 */
+		if (settings != null){
+			UpdateSettingValues();
+		}
+		else{
+			volume = 0.5f;
+			shipMode = ShipControl.Joystick;
+			laserMode = LaserControl.TouchScreen;
+		}
 	}
 	
 	//accessor for the game state (singleton pattern)
@@ -188,7 +218,9 @@ public class GameState {
 			queue.poll().render(canvas);
 		}
 		
-		
+		/**
+		 * This is probably not the best place to draw this but I'm leaving it for now --Adam
+		 */
 		/**
 		 * Draws the line we move ourselves with. I DID THIS
 		 * @author Sean Wheeler
@@ -196,11 +228,6 @@ public class GameState {
 		if(firstTouch != null && lastTouch != null && touched == true)
 		{
 			canvas.drawLine(firstTouch.x+GetCameraPosition().x, firstTouch.y+GetCameraPosition().y, lastTouch.x+GetCameraPosition().x, lastTouch.y+GetCameraPosition().y, paint);
-			
-			System.out.println("firstX: "+firstTouch.x); 
-			System.out.println("firstY: "+firstTouch.y);
-			System.out.println("X: "+GetCameraPosition().x); 
-			System.out.println("Y: "+GetCameraPosition().y);
 		}
 	}
 	
@@ -284,7 +311,29 @@ public class GameState {
 		
 	}
 	
+	/**
+	 * Recieve accelerometer input from the phone (via the GameView)
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
+	public void acceleromaterInput(float x, float y, float z){
+		accDX = Math.abs(accX - x);
+		accDY = Math.abs(accY - y);
+		accDZ = Math.abs(accZ - z);
+		
+		accX = x;
+		accY = y;
+		accZ = z;
+	}
 	
+	/**
+	 * is someone shaking the phone?
+	 * @return
+	 */
+	public boolean isShaking(){
+		return (accDX > accNoise) || (accDY > accNoise) || (accDZ > accNoise);
+	}
 	
 	
 	/**
@@ -309,6 +358,14 @@ public class GameState {
 	 */
 	public boolean screenPressed(){
 		return (touched && prevTouched) && (Math.abs((new Date().getTime()) - lastLiftTime) > pressInterval);
+	}
+	
+	/**
+	 * has the user just released their finger?
+	 * @return
+	 */
+	public boolean touchReleased(){
+		return (!touched && prevTouched);
 	}
 	
 	public Vector getScreenSize(){
@@ -370,7 +427,63 @@ public class GameState {
 	}
 	
 	public void LoadSound(int resID, String name){
-		Log.i("load","loading sounds");
 		soundTable.put(name, soundPool.load(context, resID, 1));
+	}
+	
+	public void SetVolume(float volume){
+		this.volume = volume;
+	}
+	
+	/**
+	 * give the GameState references to the user settings
+	 * @param settings
+	 * @param editor
+	 */
+	private void UpdateSettingReference(SharedPreferences settings){
+		this.settings = settings;
+	}
+	
+	/**
+	 * Use the user settings to update values in the GameState
+	 */
+	public void UpdateSettingValues(){
+		volume = settings.getFloat("Volume", 0.5f);
+		
+		switch (settings.getInt("LaserMode", 0)){
+		case 0:
+			laserMode = LaserControl.Shake;
+			break;
+		case 1:
+			laserMode = LaserControl.TouchShip;
+			break;
+		case 2:
+			laserMode = LaserControl.TouchScreen;
+			break;
+		}
+		
+		switch (settings.getInt("ShipMode", 0)){
+		case 0:
+			shipMode = ShipControl.Target;
+			break;
+		case 1:
+			shipMode = ShipControl.Joystick;
+			break;
+		case 2:
+			shipMode = ShipControl.Swipe;
+			break;
+		}
+	}
+	
+	public void UpdateSettings(SharedPreferences settings){
+		UpdateSettingReference(settings);
+		UpdateSettingValues();
+	}
+	
+	public LaserControl getLaserMode(){
+		return laserMode;
+	}
+	
+	public ShipControl getShipMode(){
+		return shipMode;
 	}
 }

@@ -1,11 +1,25 @@
 <resources>
 
-    <string name="app_name">BluSpace</string>
+    <string name="app_name">U.F.Foes!</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_title_screen">TitleScreen</string>
     <string name="start">Start Game!</string>
     <string name="title_activity_game_screen">GameScreen</string>
     <string name="restart">Restart</string>
+    <string name="options_title">Options</string>
+    <string name="options_volume">Volume</string>
+    <string-array name="LaserControlOptions">
+        <item >Shake</item>
+        <item >TouchShip</item>
+        <item >TouchScreen</item>
+    </string-array>
+        <string name="laser_options">Laser Control Options</string>
+        <string name="ship_options">Ship Control Options</string>
+        <string-array name="ShipControlOptions">
+            <item >Target</item>
+            <item >Joystick</item>
+            <item >Swipe</item>
+        </string-array>
 
 </resources>

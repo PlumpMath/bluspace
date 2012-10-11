@@ -11,13 +11,15 @@ public class Laser extends GameObject {
 	Vector velocity;
 	float lifeSpan, lifeCount;
 	CircleSprite sprite;
+	int OwnerID; //which player does this belong to?
 	
-	public Laser(Point pos, Vector velocity){
+	public Laser(Point pos, Vector velocity, int OwnerID){
 		this.pos = pos;
 		this.velocity = velocity;
 		this.lifeSpan = 1; //max length of life in seconds
 		this.lifeCount = 0; //total time alive
 		this.sprite = new CircleSprite(2,Color.argb(255,255,255,255));
+		this.OwnerID = OwnerID;
 	}
 	
 	public void update(){

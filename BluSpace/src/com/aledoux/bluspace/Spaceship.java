@@ -2,6 +2,7 @@ package com.aledoux.bluspace;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.util.Log;
 
 public class Spaceship extends GameObject {
 	float speed, shootSpeed; //pixels per second
@@ -15,6 +16,12 @@ public class Spaceship extends GameObject {
 	public Point target; //what's the target position for the spaceship?
 	float frictionForce; //how strong is friction?
 	private boolean enginesRunning; //are the engines being used (are we increasing velocity)?
+	
+	//accelerometer stuff
+	float shootTime, shootInterval;
+	
+	//for swipe movement
+	Vector swipe;
 	
 	public Spaceship(int x, int y){
 		this(new Point(x,y));
@@ -36,59 +43,23 @@ public class Spaceship extends GameObject {
 		this.sprite = new BitmapSprite(R.drawable.spaceship);
 		
 		renderPriority = 1; //raise priority above lasers
+		
+		//
+		shootTime = 0f;
+		shootInterval = 0.25f;
 	}
 	
 	public void update(){
-		//if the screen is tapped
-		Point touch = null;
-		if (GameState.State().screenTapped()){
-			touch = GameState.State().lastTouch.translate(new Vector(GameState.State().GetCameraPosition()));
-			//touch position has to be adjusted to be relative to the camera
-			
-			//if the tap is WITHIN A 75 PIXEL RADIUS of the spaceship
-			if (collision(touch,75)){
-				//shoot a laser forward
-				new Laser(pos, heading.mult(shootSpeed));
-				//play laser sound
-				GameState.State().PlaySound("shoot");
-			}
-			else{ //if the tap is elsewhere on the screen
-				//set this location as the target
-//				target = touch;
-//				//and increase the velocity of the spaceship (in the forward direction)
-//				velocity = velocity.add(heading.mult(thrustSpeed));
-//				//play acceleration sound
-//				GameState.State().PlaySound("accelerate");
-			}
-		}
-//		
+		
+		shootLasers();
+		
 		boolean wasEngineRunning = enginesRunning;
 		
-		/**
-		 * This is the new move method that follows the vector drawing idea
-		 * @author Sean Wheeler
-		 */
-		if (GameState.State().screenTouched())
-		{
-			Vector moveVec = (new Vector(GameState.State().firstTouch,GameState.State().lastTouch));
-			Vector from = new Vector(pos, pos.translate(heading));
-			Vector to =  new Vector(pos, pos.translate(moveVec));
-			rotationAngle = sprite.rotateTowards(from, to, rotationSpeed*GameState.State().deltaTime(), 10);
-			heading = new Vector(rotationAngle-90); //the negative 90 has to do with something weird in the android coord system
-			//GameState.State().PlaySound("accelerate");
-			if (velocity.mag() < 400)
-			{
-				velocity = velocity.add(moveVec.unit().mult(thrustSpeed));
-				enginesRunning = true;
-			}
-			else{
-				enginesRunning = false;
-			}
-		}
-		else{
-			enginesRunning = false;
-		}
+		controlMovement();	
 		
+		
+		
+		//ENGINGE SOUNDS
 		if (!wasEngineRunning && enginesRunning){ //if the engines JUST STARTED
 			//fire sound
 			//GameState.State().PlaySound("accelerate");
@@ -100,31 +71,139 @@ public class Spaceship extends GameObject {
 			GameState.State().StopSound("engine");
 		}
 		
-		//if we have a target
-		if (target != null){
-			//rotate toward target
-			rotationAngle = sprite.rotateTowards(new Vector(pos, pos.translate(heading)), new Vector(pos, target), rotationSpeed*GameState.State().deltaTime(), 10);
-			
-			//update heading
-			heading = new Vector(rotationAngle-90); //the negative 90 has to do with something weird in the android coord system
-		}
-		
 		//apply friction
 		velocity = velocity.sub(velocity.unit().mult(frictionForce).mult(GameState.State().deltaTime()));
 		
 		//update position based on velocity
 		pos = pos.translate(velocity.mult(GameState.State().deltaTime()));
 		
-		/**
-		//if the ship goes of the screen wrap it around
-		Vector ss = GameState.State().getScreenSize();
-		if (pos.x < 0 || pos.x > ss.x){
-			pos.x = Math.abs(pos.x - ss.x);
+		//collisions
+		for (Laser l : GameObject.allObjectsOfType(Laser.class)){
+			if (collision(l.pos) && (l.OwnerID != 1)){ //collision with laser that does not belong to this player
+				GameObject.destroy(this);
+				GameState.State().PlaySound("death");
+				new Explosion(this.pos);
+			}
 		}
-		if (pos.y < 0 || pos.y > ss.y){
-			pos.y = Math.abs(pos.y - ss.y);
+	}
+	
+	public void controlMovement(){
+		switch (GameState.State().getShipMode()){
+		case Target:
+			//if the screen is tapped
+			Point touch = null;
+			if (GameState.State().screenTouched()){
+				touch = GameState.State().lastTouch.translate(new Vector(GameState.State().GetCameraPosition()));
+				//touch position has to be adjusted to be relative to the camera
+
+				if (!collision(touch,75)){
+				 	//if the tap is not on the spaceship
+					//set this location as the target
+					target = touch;
+					
+					//if the velocity is not too fast
+					if (velocity.mag() < 300){
+						//and increase the velocity of the spaceship (in the forward direction)
+						velocity = velocity.add(heading.mult(thrustSpeed)); //multiplier is a hack TODO
+						//play acceleration sound
+						//GameState.State().PlaySound("accelerate");
+					}
+				}
+			}
+			//if we have a target
+			if (target != null){
+				//rotate toward target
+				rotationAngle = sprite.rotateTowards(new Vector(pos, pos.translate(heading)), new Vector(pos, target), rotationSpeed*GameState.State().deltaTime(), 10);
+				//update heading
+				heading = new Vector(rotationAngle-90); //the negative 90 has to do with something weird in the android coord system
+			}
+			break;
+		case Joystick:
+			target = null;
+			/**
+			 * This is the new move method that follows the vector drawing idea
+			 * @author Sean Wheeler
+			 */
+			if (GameState.State().screenTouched())
+			{
+				Vector moveVec = (new Vector(GameState.State().firstTouch,GameState.State().lastTouch));
+				Vector from = new Vector(pos, pos.translate(heading));
+				Vector to =  new Vector(pos, pos.translate(moveVec));
+				rotationAngle = sprite.rotateTowards(from, to, rotationSpeed*GameState.State().deltaTime(), 10);
+				heading = new Vector(rotationAngle-90); //the negative 90 has to do with something weird in the android coord system
+				//GameState.State().PlaySound("accelerate");
+				if (velocity.mag() < 400)
+				{
+					velocity = velocity.add(moveVec.unit().mult(thrustSpeed));
+					enginesRunning = true;
+				}
+				else{
+					enginesRunning = false;
+				}
+			}
+			else{
+				enginesRunning = false;
+			}
+			break;
+		case Swipe:
+			target = null;
+			if (GameState.State().touchReleased()){
+				swipe = (new Vector(GameState.State().firstTouch,GameState.State().lastTouch));
+				if (velocity.mag() < 400)
+				{
+					velocity = velocity.add(swipe.mult(thrustSpeed*0.1f)); //multiplier is a HACK TODO
+				}
+			}
+			if (swipe != null){
+				//rotate towards heading
+				Vector from = new Vector(pos, pos.translate(heading));
+				Vector to = new Vector(pos, pos.translate(swipe));
+				rotationAngle = sprite.rotateTowards(from, to, rotationSpeed*GameState.State().deltaTime(), 10);
+				heading = new Vector(rotationAngle-90); //the negative 90 has to do with something weird in the android coord system
+			}
 		}
-		**/
+	}
+	
+	public void shootLasers(){
+		//shooting lasers
+		shootTime += GameState.State().deltaTime();
+
+		switch (GameState.State().getLaserMode()){
+			case Shake:
+				//if the phone is shaken by the user
+				if (GameState.State().isShaking() && (shootTime > shootInterval)){
+					//shoot a laser forward
+					new Laser(pos, heading.mult(shootSpeed).add(velocity), 1);
+					//play laser sound
+					GameState.State().PlaySound("shoot");	
+					shootTime = 0f;
+				}
+				break;
+			case TouchShip:
+				//if the screen is tapped
+				Point touch = null;
+				if (GameState.State().screenTapped()){
+					touch = GameState.State().lastTouch.translate(new Vector(GameState.State().GetCameraPosition()));
+					//touch position has to be adjusted to be relative to the camera
+					//if the tap is WITHIN A 75 PIXEL RADIUS of the spaceship
+					if (collision(touch,75)){
+						//shoot a laser forward
+						new Laser(pos, heading.mult(shootSpeed).add(velocity), 1);
+						//play laser sound
+						GameState.State().PlaySound("shoot");
+					}
+				}
+				break;
+			case TouchScreen:
+				//if the screen is tapped
+				if (GameState.State().screenTapped()){
+					//shoot a laser forward
+					new Laser(pos, heading.mult(shootSpeed).add(velocity), 1);
+					//play laser sound
+					GameState.State().PlaySound("shoot");
+				}
+				break;
+		}
 	}
 
 	@Override
@@ -142,7 +221,7 @@ public class Spaceship extends GameObject {
 	 * @param p
 	 * @return isCollision
 	 */
-	public boolean collision(Vector p){
+	public boolean collision(Point p){
 		boolean isCollision = false;
 		
 		if (p.x < pos.x + width()/2 && p.x > pos.x - width()/2

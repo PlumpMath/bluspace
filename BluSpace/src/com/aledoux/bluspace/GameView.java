@@ -2,6 +2,11 @@ package com.aledoux.bluspace;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -19,13 +24,17 @@ import android.view.View.OnTouchListener;
  * @author Adam Le Doux
  *
  */
-public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Callback, OnTouchListener{
+public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Callback, OnTouchListener, SensorEventListener{
 	
 	Context context;
 	Thread thread;
 	SurfaceHolder surfaceHolder;
 	volatile boolean running;
 	volatile boolean surfaceReady; //can we draw on the surface?
+	
+	//accelerometer variables
+	SensorManager sm;
+	Sensor accelerometer;
 
 	public GameView(Context context) {
 		super(context);
@@ -40,6 +49,10 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 		
 		running = false;
 		surfaceReady = false;
+		
+		//get accelerometer
+		sm = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+		accelerometer = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 	}
 
 	public void run() {
@@ -72,11 +85,15 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 		
 		//reset the time step when we unpause
 		GameState.State().resetTimeStep();
+		
+		//turn the sensors back on when we unpause
+		sm.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 	}
 	
 	//pause the thread
 	public void onPause(){
 		running = false;
+		sm.unregisterListener(this); //turn of the sensors when we pause (conserver battery)
 	}
 
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
@@ -101,6 +118,19 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 		
 		
 		return true;
+	}
+
+	public void onAccuracyChanged(Sensor arg0, int arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void onSensorChanged(SensorEvent event) {
+		float x = event.values[0];
+		float y = event.values[1];
+		float z = event.values[2];
+		
+		GameState.State().acceleromaterInput(x, y, z);
 	}
 	
 //	public boolean onTouch(View v, MotionEvent event) {
