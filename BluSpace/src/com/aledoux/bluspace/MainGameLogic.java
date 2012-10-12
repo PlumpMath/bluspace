@@ -44,8 +44,10 @@ public class MainGameLogic extends LogicObject {
 		target = new Target(player);
 		
 		//debug
-		//create explosion
+		//create test enemy
 		new Enemy(new Point(150,150));
+		//create test asteroid
+		new Asteroid(Asteroid.Size.BIG, new Point(400,400), new Vector(0.5f,0.5f));
 		
 		//load sounds
 		GameState.State().LoadSound(R.raw.shoot, "shoot");
@@ -75,10 +77,13 @@ public class MainGameLogic extends LogicObject {
 		}
 		**/
 		
-		//make sure the player and lasers all wrap around the screen
+		//screen wrap appropriate game objects
 		ScreenWrap(player);
 		for (Laser l : GameObject.allObjectsOfType(Laser.class)){
 			ScreenWrap(l);
+		}
+		for (Asteroid a : GameObject.allObjectsOfType(Asteroid.class)){
+			ScreenWrap(a);
 		}
 		
 		//center camera on player

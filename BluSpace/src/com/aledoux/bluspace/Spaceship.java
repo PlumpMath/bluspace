@@ -59,7 +59,7 @@ public class Spaceship extends GameObject {
 		
 		
 		
-		//ENGINGE SOUNDS
+		//ENGINE SOUNDS
 		if (!wasEngineRunning && enginesRunning){ //if the engines JUST STARTED
 			//fire sound
 			//GameState.State().PlaySound("accelerate");
@@ -85,11 +85,19 @@ public class Spaceship extends GameObject {
 				new Explosion(this.pos);
 			}
 		}
+		for (Asteroid a : GameObject.allObjectsOfType(Asteroid.class)){
+			if (a.collision(this.pos, Math.min(height(), width())/2)){
+				GameObject.destroy(this);
+				GameState.State().PlaySound("death");
+				new Explosion(this.pos);
+			}
+		}
 	}
 	
 	public void controlMovement(){
 		switch (GameState.State().getShipMode()){
 		case Target:
+			enginesRunning = false;
 			//if the screen is tapped
 			Point touch = null;
 			if (GameState.State().screenTouched()){
@@ -108,6 +116,7 @@ public class Spaceship extends GameObject {
 						//play acceleration sound
 						//GameState.State().PlaySound("accelerate");
 					}
+					enginesRunning = true;
 				}
 			}
 			//if we have a target
