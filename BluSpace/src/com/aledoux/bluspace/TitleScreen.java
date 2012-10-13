@@ -19,6 +19,7 @@ public class TitleScreen extends Activity implements OnClickListener{
         findViewById(R.id.StartGame).setOnClickListener(this);
         findViewById(R.id.RestartGame).setOnClickListener(this);
         findViewById(R.id.Options).setOnClickListener(this);
+        findViewById(R.id.BluetoothGame).setOnClickListener(this);
         
         //set up user preferences
         initSettings();
@@ -74,6 +75,12 @@ public class TitleScreen extends Activity implements OnClickListener{
 				i = new Intent(this, OptionsScreen.class);
 				startActivity(i);
 				break;
+                        case R.id.BluetoothGame:
+                            
+                                i = new Intent(this, BluetoothActivity.class);
+                                
+                                startActivity(i);                           
+                                break;  
 		}
 	}
 
