@@ -30,21 +30,26 @@ public final class R {
         public static final int spaceship=0x7f020007;
     }
     public static final class id {
-        public static final int LaserControlDropdown=0x7f0a0003;
-        public static final int Options=0x7f0a0009;
-        public static final int RestartGame=0x7f0a0008;
-        public static final int ShipControlDropdown=0x7f0a0006;
-        public static final int StartGame=0x7f0a0007;
-        public static final int VolumeBar=0x7f0a0002;
-        public static final int menu_settings=0x7f0a000a;
-        public static final int textView1=0x7f0a0000;
-        public static final int textView2=0x7f0a0001;
-        public static final int textView3=0x7f0a0004;
-        public static final int textView4=0x7f0a0005;
+        public static final int BluetoothGame=0x7f0a000d;
+        public static final int HostAGame=0x7f0a0000;
+        public static final int HostGame=0x7f0a0002;
+        public static final int JoinGame=0x7f0a0001;
+        public static final int LaserControlDropdown=0x7f0a0006;
+        public static final int Options=0x7f0a000c;
+        public static final int RestartGame=0x7f0a000b;
+        public static final int ShipControlDropdown=0x7f0a0009;
+        public static final int StartGame=0x7f0a000a;
+        public static final int VolumeBar=0x7f0a0005;
+        public static final int menu_settings=0x7f0a000e;
+        public static final int textView1=0x7f0a0003;
+        public static final int textView2=0x7f0a0004;
+        public static final int textView3=0x7f0a0007;
+        public static final int textView4=0x7f0a0008;
     }
     public static final class layout {
-        public static final int options_screen=0x7f030000;
-        public static final int title_screen=0x7f030001;
+        public static final int bluetooth_activity=0x7f030000;
+        public static final int options_screen=0x7f030001;
+        public static final int title_screen=0x7f030002;
     }
     public static final class menu {
         public static final int title_screen=0x7f090000;
@@ -57,7 +62,10 @@ public final class R {
         public static final int shoot=0x7f040004;
     }
     public static final class string {
+        public static final int HostAGame=0x7f06000e;
+        public static final int JoinAGame=0x7f06000d;
         public static final int app_name=0x7f060000;
+        public static final int bluetoothGame=0x7f06000c;
         public static final int hello_world=0x7f060001;
         public static final int laser_options=0x7f060009;
         public static final int menu_settings=0x7f060002;
@@ -66,6 +74,7 @@ public final class R {
         public static final int restart=0x7f060006;
         public static final int ship_options=0x7f06000a;
         public static final int start=0x7f060004;
+        public static final int title_activity_bluetooth_screen=0x7f06000b;
         public static final int title_activity_game_screen=0x7f060005;
         public static final int title_activity_title_screen=0x7f060003;
     }

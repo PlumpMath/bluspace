@@ -21,5 +21,10 @@
             <item >Joystick</item>
             <item >Swipe</item>
         </string-array>
+        
+    <string name="title_activity_bluetooth_screen">Bluetooth Game Screen</string>
+    <string name="bluetoothGame">Bluetooth Game</string>
+    <string name="JoinAGame">Join a Game</string>
+    <string name="HostAGame">Host a Game</string>    
 
 </resources>
