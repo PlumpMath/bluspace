@@ -92,6 +92,12 @@ public class GameState {
 	private ShipControl shipMode;
 	private LaserControl laserMode;
 	
+	/**
+	 * BLUETOOTH VARIABLES
+	 */
+	private String lastBluetoothMessage;
+	private boolean isMsgRead; //has the latest bluetooth message been read?
+	
 	public GameState(){
 		gameStateStartValues();
 	}
@@ -126,9 +132,9 @@ public class GameState {
 			UpdateSettingValues();
 		}
 		else{
-			volume = 0.5f;
-			shipMode = ShipControl.Joystick;
-			laserMode = LaserControl.TouchScreen;
+			volume = 0.1f;
+			shipMode = ShipControl.Swipe;
+			laserMode = LaserControl.TouchShip;
 		}
 	}
 	
@@ -485,5 +491,27 @@ public class GameState {
 	
 	public ShipControl getShipMode(){
 		return shipMode;
+	}
+	
+	/**
+	 * how the game state receives the latest information from bluetooth (via the bluetooth service)
+	 * @param message
+	 */
+	public void bluetoothInput(String message){
+		lastBluetoothMessage = message;
+		isMsgRead = false;
+	}
+	
+	/**
+	 * reads the latest bluetooth message, if it hasn't already been read
+	 */
+	public String getLastBluetooth(){
+		if (isMsgRead){
+			return null;
+		}
+		else{
+			isMsgRead = true;
+			return lastBluetoothMessage;
+		}
 	}
 }

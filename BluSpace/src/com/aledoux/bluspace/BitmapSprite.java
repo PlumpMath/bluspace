@@ -26,6 +26,17 @@ public class BitmapSprite extends Sprite {
 		canvas.drawBitmap(bitmap, pos.x - bitmap.getWidth()/2, pos.y - bitmap.getHeight()/2, new Paint());
 	}
 	
+	public float setRotation(float degrees){
+		rotationAngle = degrees;
+		
+		Matrix mtx = new Matrix();
+		mtx.setRotate(rotationAngle);
+		
+		bitmap = Bitmap.createBitmap(sourceBitmap, 0, 0, sourceBitmap.getWidth(), sourceBitmap.getHeight(), mtx, true);
+		
+		return rotationAngle;
+	}
+	
 	public float rotate(float degrees){
 		rotationAngle += degrees;
 		

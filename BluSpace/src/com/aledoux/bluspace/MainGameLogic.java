@@ -15,7 +15,7 @@ package com.aledoux.bluspace;
 public class MainGameLogic extends LogicObject {
 	private boolean hasStarted = false;
 	
-	private Spaceship player;
+	private Player player;
 	private Target target;
 	private Background background;
 	
@@ -39,7 +39,7 @@ public class MainGameLogic extends LogicObject {
 		//create a border for the background (draw on top)
 		new Border(background,1000);
 		//create the player in the middle of the background
-		player = new Spaceship(new Point(0,0));
+		player = new Player(new Point(0,0));
 		//create a target reticule for the player
 		target = new Target(player);
 		

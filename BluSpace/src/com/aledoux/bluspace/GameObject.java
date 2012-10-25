@@ -53,4 +53,8 @@ public abstract class GameObject implements Renderable, Updateable {
 	public static <T> ArrayList<T> allObjectsOfType(Class<T> objType){
 		return LogicObject.allObjectsOfType(objType); //uses the logic object method in the background
 	}
+	
+	public static boolean StillExists(GameObject g){
+		return LogicObject.getLogic().contains(g);
+	}
 }

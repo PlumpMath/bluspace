@@ -4,9 +4,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 
 public class Asteroid extends GameObject {
-	private CircleSprite sprite;
+	//private CircleSprite sprite;
+	private BitmapSprite sprite;
 	public static enum Size {BIG, MED, SML};
-	private static int[] Widths = {200,100,60};
+	//private static int[] Widths = {200,100,60};
+	private static int[] ImgIDs = {R.drawable.asteroid_lrg, R.drawable.asteroid_med, R.drawable.asteroid_sml};
 	private Size size;
 	private int width;
 	private Vector velocity;
@@ -15,8 +17,10 @@ public class Asteroid extends GameObject {
 		this.pos = pos;
 		this.velocity = velocity;
 		this.size = size;
-		this.width = Widths[size.ordinal()];
-		this.sprite = new CircleSprite(getRadius(), Color.argb(255,255,255,255));
+		this.sprite = new BitmapSprite(ImgIDs[size.ordinal()]);
+		this.width = this.sprite.getWidth();
+		//this.width = Widths[size.ordinal()];
+		//this.sprite = new CircleSprite(getRadius(), Color.argb(255,255,255,255));
 	}
 	
 	@Override

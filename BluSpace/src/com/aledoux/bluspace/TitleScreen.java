@@ -76,7 +76,7 @@ public class TitleScreen extends Activity implements OnClickListener{
 				startActivity(i);
 				break;
             case R.id.BluetoothGame:      
-                i = new Intent(this, BluetoothActivity.class);
+                i = new Intent(this, BluetoothChat.class);
                 startActivity(i);                           
                 break;  
 		}

@@ -26,7 +26,7 @@ public class Enemy extends GameObject {
 		shootTime += GameState.State().deltaTime();
 		if (shootTime >= shootInterval){
 			//Log.i("shoot","shoot");
-			new Laser(this.pos,new Vector(0,-400),2);
+			new Laser(this.pos,new Vector(0,-400),2,false);
 			shootTime = 0f;
 		}
 	}
