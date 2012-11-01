@@ -16,10 +16,10 @@ public class TitleScreen extends Activity implements OnClickListener{
         setContentView(R.layout.title_screen);
         
         //set up button listeners
-        findViewById(R.id.StartGame).setOnClickListener(this);
-        findViewById(R.id.RestartGame).setOnClickListener(this);
-        findViewById(R.id.Options).setOnClickListener(this);
-        findViewById(R.id.BluetoothGame).setOnClickListener(this);
+        findViewById(R.id.MultiplayerButton).setOnClickListener(this);
+        findViewById(R.id.SingleplayerButton).setOnClickListener(this);
+        findViewById(R.id.OptionsButton).setOnClickListener(this);
+        findViewById(R.id.CreditsButton).setOnClickListener(this);
         
         //set up user preferences
         initSettings();
@@ -59,25 +59,23 @@ public class TitleScreen extends Activity implements OnClickListener{
 	public void onClick(View v) {
 		Intent i;
 		switch (v.getId()){
-			case R.id.StartGame:
-				i = new Intent(this, GameScreen.class);
-				startActivity(i);
-				//start the game
-				GameState.State().Start(new MainGameLogic());
+			case R.id.MultiplayerButton:      
+                i = new Intent(this, BluetoothChat.class);
+                startActivity(i);
 				break;
-			case R.id.RestartGame:
+			case R.id.SingleplayerButton:
 				i = new Intent(this, GameScreen.class);
 				startActivity(i);
 				//restart the game
 				GameState.State().Restart(new MainGameLogic());
 				break;
-			case R.id.Options:
+			case R.id.OptionsButton:
 				i = new Intent(this, OptionsScreen.class);
 				startActivity(i);
 				break;
-            case R.id.BluetoothGame:      
-                i = new Intent(this, BluetoothChat.class);
-                startActivity(i);                           
+            case R.id.CreditsButton:
+				i = new Intent(this, CreditsScreen.class);
+				startActivity(i);
                 break;  
 		}
 	}

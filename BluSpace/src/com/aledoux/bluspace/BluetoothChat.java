@@ -42,7 +42,7 @@ import android.widget.Toast;
 /**
  * This is the main Activity that displays the current chat session.
  */
-public class BluetoothChat extends Activity {
+public class BluetoothChat extends Activity implements OnClickListener {
     // Debugging
     private static final String TAG = "BluetoothChat";
     private static final boolean D = true;
@@ -64,9 +64,9 @@ public class BluetoothChat extends Activity {
 
     // Layout Views
     private TextView mTitle;
-    private ListView mConversationView;
-    private EditText mOutEditText;
-    private Button mSendButton;
+    //private ListView mConversationView;
+    //private EditText mOutEditText;
+    //private Button mSendButton;
 
     // Name of the connected device
     private String mConnectedDeviceName = null;
@@ -87,7 +87,8 @@ public class BluetoothChat extends Activity {
 
         // Set up the window layout
         requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-        setContentView(R.layout.bluetooth_example);
+        //setContentView(R.layout.bluetooth_example);
+        setContentView(R.layout.bluetooth_activity);
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title);
 
         // Set up the custom title
@@ -104,6 +105,10 @@ public class BluetoothChat extends Activity {
             finish();
             return;
         }
+        
+        //
+        findViewById(R.id.JoinGame).setOnClickListener(this);
+        findViewById(R.id.HostAGame).setOnClickListener(this);
     }
 
     @Override
@@ -143,24 +148,24 @@ public class BluetoothChat extends Activity {
         Log.d(TAG, "setupChat()");
 
         // Initialize the array adapter for the conversation thread
-        mConversationArrayAdapter = new ArrayAdapter<String>(this, R.layout.message);
-        mConversationView = (ListView) findViewById(R.id.in);
-        mConversationView.setAdapter(mConversationArrayAdapter);
+        //mConversationArrayAdapter = new ArrayAdapter<String>(this, R.layout.message);
+        //mConversationView = (ListView) findViewById(R.id.in);
+        //mConversationView.setAdapter(mConversationArrayAdapter);
 
         // Initialize the compose field with a listener for the return key
-        mOutEditText = (EditText) findViewById(R.id.edit_text_out);
-        mOutEditText.setOnEditorActionListener(mWriteListener);
+        //mOutEditText = (EditText) findViewById(R.id.edit_text_out);
+        //mOutEditText.setOnEditorActionListener(mWriteListener);
 
         // Initialize the send button with a listener that for click events
-        mSendButton = (Button) findViewById(R.id.button_send);
-        mSendButton.setOnClickListener(new OnClickListener() {
+        //mSendButton = (Button) findViewById(R.id.button_send);
+        /*mSendButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 // Send a message using content of the edit text widget
                 TextView view = (TextView) findViewById(R.id.edit_text_out);
                 String message = view.getText().toString();
                 sendMessage(message);
             }
-        });
+        });*/
 
         // Initialize the BluetoothChatService to perform bluetooth connections
         mChatService = new BluetoothChatService(this, mHandler);
@@ -218,7 +223,7 @@ public class BluetoothChat extends Activity {
 
             // Reset out string buffer to zero and clear the edit text field
             mOutStringBuffer.setLength(0);
-            mOutEditText.setText(mOutStringBuffer);
+            //mOutEditText.setText(mOutStringBuffer);
         }
     }
 
@@ -247,7 +252,7 @@ public class BluetoothChat extends Activity {
                 case BluetoothChatService.STATE_CONNECTED:
                     mTitle.setText(R.string.title_connected_to);
                     mTitle.append(mConnectedDeviceName);
-                    mConversationArrayAdapter.clear();
+                    //mConversationArrayAdapter.clear();
                     //STUFF ADAM HACKED IN WHOO
                     Intent i = new Intent(getBaseContext(), GameScreen.class);
         			startActivity(i);
@@ -269,13 +274,13 @@ public class BluetoothChat extends Activity {
                 byte[] writeBuf = (byte[]) msg.obj;
                 // construct a string from the buffer
                 String writeMessage = new String(writeBuf);
-                mConversationArrayAdapter.add("Me:  " + writeMessage);
+                //mConversationArrayAdapter.add("Me:  " + writeMessage);
                 break;
             case MESSAGE_READ:
                 byte[] readBuf = (byte[]) msg.obj;
                 // construct a string from the valid bytes in the buffer
                 String readMessage = new String(readBuf, 0, msg.arg1);
-                mConversationArrayAdapter.add(mConnectedDeviceName+":  " + readMessage);
+                //mConversationArrayAdapter.add(mConnectedDeviceName+":  " + readMessage);
                 //STUFF ADAM HACKED IN WHOO
                 GameState.State().bluetoothInput(readMessage);
                 break;
@@ -329,20 +334,34 @@ public class BluetoothChat extends Activity {
         return true;
     }
 
+    /*
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.scan:
+        case R.id.JoinGame:
             // Launch the DeviceListActivity to see devices and do scan
             Intent serverIntent = new Intent(this, DeviceListActivity.class);
             startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
             return true;
-        case R.id.discoverable:
+        case R.id.HostAGame:
             // Ensure this device is discoverable by others
             ensureDiscoverable();
             return true;
         }
         return false;
     }
+    */
+
+	public void onClick(View v) {
+		switch (v.getId()) {
+        case R.id.JoinGame:
+            // Launch the DeviceListActivity to see devices and do scan
+            Intent serverIntent = new Intent(this, DeviceListActivity.class);
+            startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+        case R.id.HostAGame:
+            // Ensure this device is discoverable by others
+            ensureDiscoverable();
+        }
+	}
 
 }
