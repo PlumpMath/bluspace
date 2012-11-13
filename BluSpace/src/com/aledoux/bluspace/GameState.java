@@ -95,7 +95,8 @@ public class GameState {
 	/**
 	 * BLUETOOTH VARIABLES
 	 */
-	private String lastBluetoothMessage;
+	//private String lastBluetoothMessage;
+	private int[] lastBluetoothMessage;
 	private boolean isMsgRead; //has the latest bluetooth message been read?
 	
 	public GameState(){
@@ -497,7 +498,13 @@ public class GameState {
 	 * how the game state receives the latest information from bluetooth (via the bluetooth service)
 	 * @param message
 	 */
+	/*
 	public void bluetoothInput(String message){
+		lastBluetoothMessage = message;
+		isMsgRead = false;
+	}
+	*/
+	public void bluetoothInput(int[] message){
 		lastBluetoothMessage = message;
 		isMsgRead = false;
 	}
@@ -505,6 +512,16 @@ public class GameState {
 	/**
 	 * reads the latest bluetooth message, if it hasn't already been read
 	 */
+	public int[] getLastBluetooth(){
+		if (isMsgRead){
+			return null;
+		}
+		else{
+			isMsgRead = true;
+			return lastBluetoothMessage;
+		}
+	}
+	/*
 	public String getLastBluetooth(){
 		if (isMsgRead){
 			return null;
@@ -514,4 +531,5 @@ public class GameState {
 			return lastBluetoothMessage;
 		}
 	}
+	*/
 }

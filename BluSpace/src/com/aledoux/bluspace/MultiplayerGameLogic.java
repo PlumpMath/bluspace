@@ -1,5 +1,9 @@
 package com.aledoux.bluspace;
 
+import java.nio.ByteBuffer;
+
+import android.util.Log;
+
 /**
  * The multiplayer game logic for BluSpace
  * is stored here. It is a Logic Object
@@ -51,7 +55,7 @@ public class MultiplayerGameLogic extends LogicObject {
 		
 		//bluetooth
 		bluetoothCounter = 0.0f;
-		bluetoothDelay = 0.1f; //wait nth of a second between bluetooth updates
+		bluetoothDelay = 1f/20f; //bluetooth update 1f/(X times per second)
 				
 		hasStarted = true;
 	}
@@ -78,7 +82,41 @@ public class MultiplayerGameLogic extends LogicObject {
 		if (bluetooth != null){
 			bluetoothCounter += GameState.State().deltaTime();
 			if (bluetoothCounter >= bluetoothDelay){
+				//NEW VERSION
+				//TESTING
+				ByteBuffer bb = ByteBuffer.allocate(24);
+				int[] msgArray = {-1,-1,-1,-1,-1,-1}; //default: error code
+				boolean foundMsg = false;
+				
+				for (Laser l : GameObject.allObjectsOfType(Laser.class)){
+					if (!foundMsg){
+						if (!l.isSent){
+							msgArray = l.bluetoothData();
+							l.isSent = true;
+							foundMsg = true;
+						}
+					}
+				}
+				
+				if (!foundMsg){
+					if (GameObject.StillExists(player)){ //if the player still exists
+						msgArray = player.bluetoothData();
+						Log.i("data 1", "from me: " + msgArray[1] + "," + msgArray[2]);
+					}
+					else{
+						int[] dead = {0,0,0,0,0,0}; //dead player
+						msgArray = dead; 
+					}
+					foundMsg = true;
+				}
+				
+				bb.asIntBuffer().put(msgArray);
+				bluetooth.write(bb.array());
+				
+				bluetoothCounter = 0.0f;
+				
 				//DEBUG: ONLY ONE MESSAGE AT A TIME
+				/**
 				String sendMsg = "";
 				
 				boolean foundMsg = false;
@@ -102,9 +140,11 @@ public class MultiplayerGameLogic extends LogicObject {
 					foundMsg = true;
 				}
 				
+				Log.i("bytes",""+sendMsg.getBytes().length);
 				bluetooth.write(sendMsg.getBytes());
 				
 				bluetoothCounter = 0.0f;
+				**/
 				
 				//OLD VERSION
 				/**
@@ -134,8 +174,23 @@ public class MultiplayerGameLogic extends LogicObject {
 				**/
 			}
 			
-			String newMsg = GameState.State().getLastBluetooth();
+			//String newMsg = GameState.State().getLastBluetooth();
+			int[] newMsg = GameState.State().getLastBluetooth();
+			//int[] newMsg = {1,40,40,10,10,0};
 			if (newMsg != null){
+				
+				//NEW VERSION
+				if (newMsg[0] == 0 && GameObject.StillExists(opponent)){
+					opponent.Die();
+				}
+				else if (newMsg[0] == 1 && GameObject.StillExists(opponent)){
+					opponent.UpdateState(newMsg);
+				}
+				else if (newMsg[0] == 2){
+					new Laser(newMsg);
+				}
+				
+				
 				/**
 				String[] msgList = newMsg.split("/");
 				
@@ -152,6 +207,9 @@ public class MultiplayerGameLogic extends LogicObject {
 					}
 				}
 				**/
+				
+				//OLD BUT WORKING VERSION
+				/**
 				String[] msgParts = newMsg.split(":");
 				String name = msgParts[0];
 				String data = msgParts[1];
@@ -162,6 +220,7 @@ public class MultiplayerGameLogic extends LogicObject {
 				else if (name.equals("/LASER")){
 					new Laser(data);
 				}
+				**/
 			}
 		}
 	}

@@ -46,4 +46,17 @@ public class Opponent extends Spaceship {
 			rotationAngle = sprite.setRotation(Float.parseFloat(angleStr));
 		}
 	}
+	
+	public void Die(){
+		GameObject.destroy(this);
+		new Explosion(this.pos);
+	}
+	
+	public void UpdateState(int[] data){
+		pos.x = (float) data[1];
+		pos.y = (float) data[2];
+		velocity.x = (float) data[3];
+		velocity.y = (float) data[4];
+		rotationAngle = sprite.setRotation( ((float) data[5]) / 100f );
+	}
 }

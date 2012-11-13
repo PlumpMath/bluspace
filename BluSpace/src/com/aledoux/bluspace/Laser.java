@@ -42,6 +42,10 @@ public class Laser extends GameObject {
 		this.OwnerID = 2;
 		isSent = true;
 	}
+	
+	public Laser(int[] data){
+		this(new Point((float)data[1],(float)data[2]), new Vector((float)data[3],(float)data[4]),2,false);
+	}
 
 	public void update(){
 		//update life count
@@ -64,7 +68,14 @@ public class Laser extends GameObject {
 		sprite.draw(canvas,this.pos);
 	}
 	
+	/*
 	public String bluetoothData(){
 		return pos.x + "," + pos.y + ";" + velocity.x + "," + velocity.y;
+	}
+	*/
+	
+	public int[] bluetoothData(){
+		int[] data = {2,(int)pos.x,(int)pos.y,(int)velocity.x,(int)velocity.y,0};
+		return data;
 	}
 }

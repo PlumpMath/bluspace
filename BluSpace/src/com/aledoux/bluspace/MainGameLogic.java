@@ -1,5 +1,9 @@
 package com.aledoux.bluspace;
 
+import java.nio.ByteBuffer;
+
+import android.util.Log;
+
 /**
  * The main game logic for BluSpace
  * is stored here. It is a Logic Object

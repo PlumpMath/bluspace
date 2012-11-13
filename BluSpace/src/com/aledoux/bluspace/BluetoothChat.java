@@ -16,6 +16,8 @@
 
 package com.aledoux.bluspace;
 
+import java.nio.ByteBuffer;
+
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -279,10 +281,12 @@ public class BluetoothChat extends Activity implements OnClickListener {
             case MESSAGE_READ:
                 byte[] readBuf = (byte[]) msg.obj;
                 // construct a string from the valid bytes in the buffer
-                String readMessage = new String(readBuf, 0, msg.arg1);
+                //String readMessage = new String(readBuf, 0, msg.arg1);
                 //mConversationArrayAdapter.add(mConnectedDeviceName+":  " + readMessage);
                 //STUFF ADAM HACKED IN WHOO
-                GameState.State().bluetoothInput(readMessage);
+                ByteBuffer bb = ByteBuffer.wrap(readBuf);
+                int[] readArray = {bb.getInt(), bb.getInt(), bb.getInt(), bb.getInt(), bb.getInt(), bb.getInt()};
+                GameState.State().bluetoothInput(readArray);
                 break;
             case MESSAGE_DEVICE_NAME:
                 // save the connected device's name

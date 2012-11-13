@@ -154,7 +154,14 @@ public class Player extends Spaceship {
 		}
 	}
 	
+	/*
 	public String bluetoothData(){
 		return pos.x + "," + pos.y + ";" + velocity.x + "," + velocity.y + ";" + rotationAngle;
+	}
+	*/
+	
+	public int[] bluetoothData(){
+		int[] data = {1,(int)pos.x,(int)pos.y,(int)velocity.x,(int)velocity.y,(int)(100*rotationAngle)};
+		return data;
 	}
 }
