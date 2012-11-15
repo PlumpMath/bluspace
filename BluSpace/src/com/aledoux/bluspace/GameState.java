@@ -98,6 +98,7 @@ public class GameState {
 	//private String lastBluetoothMessage;
 	private int[] lastBluetoothMessage;
 	private boolean isMsgRead; //has the latest bluetooth message been read?
+	public boolean isHost = true; //hosting the game?
 	
 	public GameState(){
 		gameStateStartValues();

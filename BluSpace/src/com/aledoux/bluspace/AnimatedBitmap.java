@@ -3,6 +3,8 @@ package com.aledoux.bluspace;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
 
@@ -13,6 +15,7 @@ public class AnimatedBitmap extends Sprite {
 	private float time, animationSpeed;
 	public static enum Type {ONCE, LOOP, BACK_AND_FORTH}; //animation types
 	private Type animMode; //what mode of animation are we using?
+	private float rotationAngle;
 	
 	/**
 	 * constructor
@@ -32,6 +35,7 @@ public class AnimatedBitmap extends Sprite {
 		this.time = 0f;
 		this.animMode = animMode;
 		this.direction = 1;
+		this.rotationAngle = 0f;
 	}
 	
 	/**
@@ -83,11 +87,25 @@ public class AnimatedBitmap extends Sprite {
 	public void draw(Canvas canvas, Point pos) {
 		int row = (frame/cols) % rows;
 		int col = frame % cols;
+		
+		Bitmap curFrameBitmap = Bitmap.createBitmap(
+				sourceBitmap, 
+				col*getWidth(), row*getHeight(), 
+				getWidth(), getHeight());
+		
+		Matrix mtx = new Matrix();
+		mtx.setRotate(rotationAngle);
+		curFrameBitmap = Bitmap.createBitmap(curFrameBitmap, 0, 0, curFrameBitmap.getWidth(), curFrameBitmap.getHeight(), mtx, true);
+		
+		canvas.drawBitmap(curFrameBitmap, pos.x - curFrameBitmap.getWidth()/2, pos.y - curFrameBitmap.getHeight()/2, new Paint());
+		
+		/*
 		canvas.drawBitmap(
 				sourceBitmap, 
 				new Rect(col*getWidth(),row*getHeight(),(col*getWidth())+getWidth(),(row*getHeight())+getHeight()), 
 				new Rect((int)(pos.x - getWidth()/2),(int)(pos.y - getHeight()/2), (int)(pos.x + getWidth()/2), (int)(pos.y + getHeight()/2)), 
 				null);
+		*/
 	}
 	
 	public int getWidth(){
@@ -96,6 +114,10 @@ public class AnimatedBitmap extends Sprite {
 	
 	public int getHeight(){
 		return sourceBitmap.getHeight() / rows;
+	}
+	
+	public void setRotation(float angle){
+		this.rotationAngle = angle;
 	}
 
 }

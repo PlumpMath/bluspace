@@ -17,7 +17,7 @@ public class Border extends RenderObject {
 		this.height = b.GetHeight();
 		this.width = b.GetWidth();
 		
-		int borderColor = Color.argb(255,25,25,25); //right now the color of these borders is hardcoded
+		int borderColor = Color.argb(255,255,255,255); //right now the color of these borders is hardcoded
 		top = new RectSprite(b.GetWidth()*2,b.GetHeight(),borderColor);
 		bottom = new RectSprite(b.GetWidth()*2,b.GetHeight(),borderColor);
 		left = new RectSprite(b.GetWidth(),b.GetHeight(),borderColor);

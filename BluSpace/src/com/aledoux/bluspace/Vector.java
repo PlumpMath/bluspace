@@ -113,4 +113,32 @@ public class Vector {
 	public static float Cross(Vector a, Vector b){
 		return a.cross(b);
 	}
+	
+	public static float AngleBetween(Vector a, Vector b){
+		//find the angle
+	    float cos_theta = Dot(a,b) / (a.mag() * b.mag());
+	    float theta = (float) Math.acos(cos_theta);
+	    
+	    //correct for strange outlier values that result in angles that are NaN (not a number)
+	    if (Float.isNaN(cos_theta)){
+	    	theta = 0;
+	    }
+	    else if (Float.isNaN(theta)){
+	    	if (cos_theta > 1){
+	    		cos_theta = 1;
+	    	}
+	    	else if (cos_theta < -1){
+	    		cos_theta = -1;
+	    	}
+	    	theta = (float) Math.acos(cos_theta);
+	    }
+	    
+	    //find the direction of the turn
+	    int turn = 1; //default = right
+	    if (Cross(a,b) < 0){
+	    	turn = -1; //turn left
+	    }
+		
+		return (float) Math.toDegrees(turn * theta);
+	}
 }

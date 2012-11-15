@@ -17,17 +17,17 @@ public class Spaceship extends GameObject {
 	float rotationAngle;
 	float rotationSpeed; //degrees per second
 	Vector heading; //a unit vector representing the direction the ship is heading
-	Vector velocity; //what's the speed of the spaceship?
+	//Vector velocity; //what's the speed of the spaceship?
 	public Point target; //what's the target position for the spaceship?
 	float frictionForce; //how strong is friction?
 	boolean enginesRunning; //are the engines being used (are we increasing velocity)?
 	int ID; //which ship is this?
 	
-	public Spaceship(int x, int y){
-		this(new Point(x,y));
+	public Spaceship(int x, int y, int ID){
+		this(new Point(x,y), ID);
 	}
 	
-	public Spaceship(Point pos){
+	public Spaceship(Point pos, int ID){
 		this.pos = pos;
 		speed = 100f; //how many pixels we move per second
 		thrustSpeed = 20;
@@ -40,11 +40,16 @@ public class Spaceship extends GameObject {
 		frictionForce = 15;
 		enginesRunning = false;
 		
-		this.sprite = new BitmapSprite(R.drawable.spaceship);
+		if (ID == 1){
+			this.sprite = new BitmapSprite(R.drawable.spaceship_sml);
+		}
+		else if (ID == 2){
+			this.sprite = new BitmapSprite(R.drawable.ufo_sml);
+		}
 		
 		renderPriority = 1; //raise priority above lasers
 		
-		ID = 0;
+		this.ID = ID;
 	}
 	
 	public void update(){
@@ -88,6 +93,12 @@ public class Spaceship extends GameObject {
 		for (Asteroid a : GameObject.allObjectsOfType(Asteroid.class)){
 			if (a.collision(this.pos, Math.min(height(), width())/2)){
 				GameObject.destroy(this);
+				try{
+					GameState.State().StopSound("engine");
+				}
+				catch(Exception e){
+					e.printStackTrace();
+				}
 				GameState.State().PlaySound("death");
 				new Explosion(this.pos);
 			}

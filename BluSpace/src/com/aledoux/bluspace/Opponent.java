@@ -10,11 +10,8 @@ import android.util.Log;
 public class Opponent extends Spaceship {
 	float goalAngle; //the angle the ship wants to be at
 	
-	public Opponent(Point pos) {
-		super(pos);
-		
-		//player 2
-		ID = 2;
+	public Opponent(Point pos, int ID) {
+		super(pos, ID);
 	}
 	
 	@Override

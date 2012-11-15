@@ -21,6 +21,11 @@ public class BitmapSprite extends Sprite {
 		bitmap = Bitmap.createBitmap(sourceBitmap);
  	}
 	
+	public BitmapSprite(Bitmap bmp){
+		sourceBitmap = bmp;
+		bitmap = Bitmap.createBitmap(sourceBitmap);
+ 	}
+	
 	@Override
 	public void draw(Canvas canvas, Point pos) {
 		canvas.drawBitmap(bitmap, pos.x - bitmap.getWidth()/2, pos.y - bitmap.getHeight()/2, new Paint());

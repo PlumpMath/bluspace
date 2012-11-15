@@ -1,13 +1,20 @@
 package com.aledoux.bluspace;
 
+/*
+ * MEGA SUPER DEPRECATED DO NOT USE EVER
+ */
+
 import android.app.Activity;
 import android.bluetooth.*;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
 
@@ -26,6 +33,14 @@ public class BluetoothActivity extends Activity implements OnClickListener{
     public void onCreate(Bundle icicle) 
     {
 		super.onCreate(icicle);
+		
+		//turn off the title bar and status bar
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        
+        //request portrait orientation
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        
 		//Set the UI File 
 		setContentView(R.layout.bluetooth_activity);
 		
@@ -63,23 +78,30 @@ public class BluetoothActivity extends Activity implements OnClickListener{
     {
         //Handle the button clicks:
         int buttonID = view.getId();
-        
+        Log.i("helllooooo","wtf");
         switch(buttonID)
         {
             case R.id.HostAGame: 
+
+                GameState.State().isHost = false;
+                Log.i("host1", "host " + GameState.State().isHost);
                 //Make Discoverable
                 Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
                 discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
                 startActivity(discoverableIntent);
-                
                 Bluetooth.makeServer();
                     
                 break;
                 
             case R.id.JoinGame:
+            	Log.i("what the fuck","wtf");
+            	GameState.State().isHost = false;
                 Bluetooth.makeClient();
+                
+                Log.i("host1", "host " + GameState.State().isHost);
                 break;
         }
+        Log.i("host1", "host " + GameState.State().isHost);
        
     }
     

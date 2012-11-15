@@ -8,7 +8,7 @@ import android.graphics.Color;
 public class Laser extends GameObject {
 	public static ArrayList<Laser> ALL_LASERS = new ArrayList<Laser>();
 	
-	Vector velocity;
+	//Vector velocity;
 	float lifeSpan, lifeCount;
 	//CircleSprite sprite;
 	AnimatedBitmap sprite;
@@ -20,15 +20,22 @@ public class Laser extends GameObject {
 	public Laser(Point pos, Vector velocity, int OwnerID, boolean shouldSend){
 		this.pos = pos;
 		this.velocity = velocity;
-		this.lifeSpan = 1; //max length of life in seconds
+		this.lifeSpan = 2; //max length of life in seconds
 		this.lifeCount = 0; //total time alive
-		this.sprite = new AnimatedBitmap(R.drawable.redlasersml, 1, 3, 0.1f, AnimatedBitmap.Type.BACK_AND_FORTH);
+		if (OwnerID == 1){
+			this.sprite = new AnimatedBitmap(R.drawable.redlaser_med, 1, 3, 0.3f, AnimatedBitmap.Type.BACK_AND_FORTH);
+		}
+		else if (OwnerID == 2){
+			this.sprite = new AnimatedBitmap(R.drawable.greenlaser_med, 1, 3, 0.3f, AnimatedBitmap.Type.BACK_AND_FORTH);
+		}
+		this.sprite.setRotation(-1 * Vector.AngleBetween(velocity, new Vector(0,-1)));
 		this.OwnerID = OwnerID;
 		
 		//bluetooth
 		isSent = !shouldSend; //if we should send the laser across bluetooth, mark it as NOT sent
 	}
 	
+	/*
 	public Laser(String data) { //create a laser from string data (usually bluetooth)
 		String[] parts = data.split(";");
 		String[] pos = parts[0].split(",");
@@ -42,9 +49,10 @@ public class Laser extends GameObject {
 		this.OwnerID = 2;
 		isSent = true;
 	}
+	*/
 	
-	public Laser(int[] data){
-		this(new Point((float)data[1],(float)data[2]), new Vector((float)data[3],(float)data[4]),2,false);
+	public Laser(int[] data, int ID){
+		this(new Point((float)data[1],(float)data[2]), new Vector((float)data[3],(float)data[4]),ID,false);
 	}
 
 	public void update(){

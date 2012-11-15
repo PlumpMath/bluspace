@@ -11,13 +11,9 @@ public class Player extends Spaceship {
 	//for swipe movement
 	Vector swipe;
 	
-	public Player(Point pos) {
-		super(pos);
+	public Player(Point pos, int ID) {
+		super(pos, ID);
 		
-		//player 1
-		ID = 1;
-		
-		//
 		shootTime = 0f;
 		shootInterval = 0.25f;
 	}
@@ -87,9 +83,10 @@ public class Player extends Spaceship {
 			target = null;
 			if (GameState.State().touchReleased()){
 				swipe = (new Vector(GameState.State().firstTouch,GameState.State().lastTouch));
-				if (velocity.mag() < 400)
-				{
-					velocity = velocity.add(swipe.mult(thrustSpeed*0.1f)); //multiplier is a HACK TODO
+				velocity = velocity.add(swipe.mult(thrustSpeed*0.1f)); //multiplier is a HACK TODO
+				//clamp velocity
+				if (velocity.mag() > 200){
+					velocity.mult(400f / velocity.mag());
 				}
 			}
 			if (swipe != null){
@@ -107,6 +104,7 @@ public class Player extends Spaceship {
 		//shooting lasers
 		shootTime += GameState.State().deltaTime();
 
+		/*
 		int count = 0;
 		for (Laser l : GameObject.allObjectsOfType(Laser.class)){
 			if (l.OwnerID == ID){
@@ -115,12 +113,13 @@ public class Player extends Spaceship {
 		}
 		
 		if (count <= 0){ //DEBUG: ONLY ALLOW ONE SHOT AT A TIME
+		*/
 			switch (GameState.State().getLaserMode()){
 				case Shake:
 					//if the phone is shaken by the user
 					if (GameState.State().isShaking() && (shootTime > shootInterval)){
 						//shoot a laser forward
-						new Laser(pos, heading.mult(shootSpeed).add(velocity), 1, true);
+						new Laser(pos, heading.mult(shootSpeed).add(velocity), ID, true);
 						//play laser sound
 						GameState.State().PlaySound("shoot");	
 						shootTime = 0f;
@@ -135,7 +134,7 @@ public class Player extends Spaceship {
 						//if the tap is WITHIN A 75 PIXEL RADIUS of the spaceship
 						if (collision(touch,75)){
 							//shoot a laser forward
-							new Laser(pos, heading.mult(shootSpeed).add(velocity), 1, true);
+							new Laser(pos, heading.mult(shootSpeed).add(velocity), ID, true);
 							//play laser sound
 							GameState.State().PlaySound("shoot");
 						}
@@ -145,14 +144,14 @@ public class Player extends Spaceship {
 					//if the screen is tapped
 					if (GameState.State().screenTapped()){
 						//shoot a laser forward
-						new Laser(pos, heading.mult(shootSpeed).add(velocity), 1, true);
+						new Laser(pos, heading.mult(shootSpeed).add(velocity), ID, true);
 						//play laser sound
 						GameState.State().PlaySound("shoot");
 					}
 					break;
 			}
 		}
-	}
+	//}
 	
 	/*
 	public String bluetoothData(){

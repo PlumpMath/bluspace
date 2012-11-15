@@ -22,6 +22,7 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -32,6 +33,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
@@ -89,6 +91,13 @@ public class BluetoothChat extends Activity implements OnClickListener {
 
         // Set up the window layout
         requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+        
+        //turn off the status bar
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        
+        //request portrait orientation
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        
         //setContentView(R.layout.bluetooth_example);
         setContentView(R.layout.bluetooth_activity);
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title);
@@ -261,6 +270,15 @@ public class BluetoothChat extends Activity implements OnClickListener {
         			//restart the game
         			MultiplayerGameLogic logic = new MultiplayerGameLogic();
         			logic.setBluetooth(mChatService);
+        			Log.i("host2", "host " + GameState.State().isHost);
+        			if (GameState.State().isHost){
+        				Log.i("host","host yup");
+        				//start data
+        				logic.myID = 1;
+        				logic.opponentID = 2;
+        				logic.backgroundCase = (int) (Math.random() * 3);
+        				logic.asteroidCase = (int) (Math.random() * 3);
+        			}
         			GameState.State().Restart(logic);
                     break;
                 case BluetoothChatService.STATE_CONNECTING:
@@ -359,12 +377,19 @@ public class BluetoothChat extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
         case R.id.JoinGame:
+        	GameState.State().isHost = false;
+        	Log.i("host1", "host " + GameState.State().isHost);
             // Launch the DeviceListActivity to see devices and do scan
             Intent serverIntent = new Intent(this, DeviceListActivity.class);
             startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+            ensureDiscoverable();
+            break;
         case R.id.HostAGame:
+        	GameState.State().isHost = true;
+        	Log.i("host1", "host " + GameState.State().isHost);
             // Ensure this device is discoverable by others
             ensureDiscoverable();
+            break;
         }
 	}
 

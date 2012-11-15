@@ -11,7 +11,7 @@ public class Asteroid extends GameObject {
 	private static int[] ImgIDs = {R.drawable.asteroid_lrg, R.drawable.asteroid_med, R.drawable.asteroid_sml};
 	private Size size;
 	private int width;
-	private Vector velocity;
+	//private Vector velocity;
 	
 	public Asteroid(Size size, Point pos, Vector velocity){
 		this.pos = pos;
@@ -25,7 +25,7 @@ public class Asteroid extends GameObject {
 	
 	@Override
 	public void update() {
-		pos = pos.translate(velocity);
+		pos = pos.translate(velocity.mult(GameState.State().deltaTime()));
 		
 		for (Laser l : GameObject.allObjectsOfType(Laser.class)){
 			if (collision(l.pos,0)){
@@ -39,16 +39,16 @@ public class Asteroid extends GameObject {
 		switch(size){
 		case BIG:
 			GameObject.destroy(this);
-			for (int i = 0; i < (1 + (int)(Math.random()*2)); i++){
-				Vector t = new Vector((float)(getRadius() - Math.random()*width),(float)(getRadius() - Math.random()*width));
-				new Asteroid(Size.MED,this.pos.translate(t),new Vector((float)(-1 + Math.random()*2), (float)(-1 + Math.random()*2)));
+			for (int i = 0; i < 2; i++){
+				Vector t = new Vector((float)(Math.sin(i)*width),(float)(Math.cos(i)*width));
+				new Asteroid(Size.MED,this.pos.translate(t.div(2)),t);
 			}
 			break;
 		case MED:
 			GameObject.destroy(this);
-			for (int i = 0; i < (2 + (int)(Math.random()*3)); i++){
-				Vector t = new Vector((float)(getRadius() - Math.random()*width),(float)(getRadius() - Math.random()*width));
-				new Asteroid(Size.SML,this.pos.translate(t),new Vector((float)(-1 + Math.random()*2), (float)(-1 + Math.random()*2)));
+			for (int i = 0; i < 3; i++){
+				Vector t = new Vector((float)(Math.sin(i)*width),(float)(Math.cos(i)*width));
+				new Asteroid(Size.SML,this.pos.translate(t.div(2)),t);
 			}
 			break;
 		case SML:

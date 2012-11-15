@@ -1,11 +1,17 @@
 package com.aledoux.bluspace;
 
+import java.io.IOException;
+
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.view.Menu;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 
 public class TitleScreen extends Activity implements OnClickListener{
@@ -13,6 +19,14 @@ public class TitleScreen extends Activity implements OnClickListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        //turn off the title bar and status bar
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        
+        //request portrait orientation
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
         setContentView(R.layout.title_screen);
         
         //set up button listeners
@@ -23,6 +37,20 @@ public class TitleScreen extends Activity implements OnClickListener{
         
         //set up user preferences
         initSettings();
+        
+        MediaPlayer mp;
+        mp = MediaPlayer.create(getApplicationContext(), R.raw.theme);
+        mp.setLooping(true);
+        try {
+			mp.prepare();
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        mp.start();
     }
     
     /**

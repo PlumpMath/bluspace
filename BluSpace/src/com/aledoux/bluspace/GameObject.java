@@ -20,6 +20,9 @@ public abstract class GameObject implements Renderable, Updateable {
 	
 	public Point pos; //current position of the game object
 	
+	//for physics objects (INELEGANT HAX)
+	public Vector velocity;
+	
 	public GameObject(){
 		RenderObject.getRenderables().add(this);
 		LogicObject.getLogic().add(this);

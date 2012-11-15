@@ -2,6 +2,8 @@ package com.aledoux.bluspace;
 
 import java.nio.ByteBuffer;
 
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.util.Log;
 
 /**
@@ -23,6 +25,8 @@ public class MainGameLogic extends LogicObject {
 	private Target target;
 	private Background background;
 	
+	private float respawnCount, respawnTime;
+	
 	/**
 	 * An initialization function that's called the first time this object is updated
 	 * IMPORTANT: do NOT try to replicate this behavior with a constructor - it WON'T work
@@ -31,7 +35,7 @@ public class MainGameLogic extends LogicObject {
 		//create the random space background and put its priority behind everything else
 		switch ((int) (Math.random() * 3)){
 			case 0:
-				background = new Background(R.drawable.spaceback_sml,new Point(0,0),-1);
+				background = new Background(R.drawable.spaceback_med,new Point(0,0),-1);
 				break;
 			case 1:
 				background = new Background(R.drawable.spaceback_asteroids,new Point(0,0),-1);
@@ -40,18 +44,14 @@ public class MainGameLogic extends LogicObject {
 				background = new Background(R.drawable.spaceback_nebula,new Point(0,0),-1);
 				break;
 		}
+		//generate asteroids
+		initAsteroids((int)(Math.random()*3));
 		//create a border for the background (draw on top)
 		new Border(background,1000);
-		//create the player in the middle of the background
-		player = new Player(new Point(0,0));
+		//create the player
+		player = new Player(new Point(-300,300), 1);
 		//create a target reticule for the player
 		target = new Target(player);
-		
-		//debug
-		//create test enemy
-		new Enemy(new Point(150,150));
-		//create test asteroid
-		new Asteroid(Asteroid.Size.BIG, new Point(400,400), new Vector(0.5f,0.5f));
 		
 		//load sounds
 		GameState.State().LoadSound(R.raw.shoot, "shoot");
@@ -61,6 +61,9 @@ public class MainGameLogic extends LogicObject {
 		GameState.State().LoadSound(R.raw.death, "death");
 		
 		hasStarted = true;
+		
+		respawnCount = 0.0f;
+		respawnTime = 4f;
 	}
 	
 	@Override
@@ -69,29 +72,25 @@ public class MainGameLogic extends LogicObject {
 			OnStart();
 		}
 		
-		/**
-		//once the screen loads, create the player at the center of the screen
-		if (player == null && GameState.State().ScreenSize != null){
-			player = new Spaceship(new Point(GameState.State().ScreenSize.div(2)));
-		}
-		
-		//once the player exists, create the target circle
-		if (target == null && player != null){
-			target = new Target(player);
-		}
-		**/
-		
 		//screen wrap appropriate game objects
-		ScreenWrap(player);
+		ScreenBounce(player);
 		for (Laser l : GameObject.allObjectsOfType(Laser.class)){
-			ScreenWrap(l);
+			ScreenBounce(l);
 		}
 		for (Asteroid a : GameObject.allObjectsOfType(Asteroid.class)){
-			ScreenWrap(a);
+			ScreenBounce(a);
 		}
 		
 		//center camera on player
 		GameState.State().SetCameraPosition(player.pos.translate(GameState.State().ScreenSize.div(-2)));
+		
+		if (!GameObject.StillExists(player)){
+			respawnCount += GameState.State().deltaTime();
+			if (respawnCount > respawnTime){
+				player = new Player(new Point(-300,300), 1);
+				respawnCount = 0.0f;
+			}
+		}
 	}
 	
 	/**
@@ -110,6 +109,54 @@ public class MainGameLogic extends LogicObject {
 		}
 		else if (o.pos.y < (background.pos.y - background.GetHeight()/2)){
 			o.pos.y += background.GetHeight();
+		}
+	}
+	
+	public void ScreenBounce(GameObject o){
+		if (o.pos.x > (background.pos.x + background.GetWidth()/2) || o.pos.x < (background.pos.x - background.GetWidth()/2)){
+			o.velocity.x *= -1;
+			if (o.pos.x > (background.pos.x + background.GetWidth()/2)){
+				o.pos.x = background.pos.x + background.GetWidth()/2;
+			}
+			else{
+				o.pos.x = background.pos.x - background.GetWidth()/2;
+			}
+		}
+		if (o.pos.y > (background.pos.y + background.GetHeight()/2) || o.pos.y < (background.pos.y - background.GetHeight()/2)){
+			o.velocity.y *= -1;
+			if (o.pos.y > (background.pos.y + background.GetHeight()/2)){
+				o.pos.y = background.pos.y + background.GetHeight()/2;
+			}
+			else{
+				o.pos.y = background.pos.y - background.GetHeight()/2;
+			}
+		}
+	}
+	
+	public void initAsteroids(int c){
+		switch (c){
+			case 0:
+				new Asteroid(Asteroid.Size.BIG, new Point(200,200), new Vector(50f,50f));
+				new Asteroid(Asteroid.Size.MED, new Point(-100,-100), new Vector(50f,-50f));
+				new Asteroid(Asteroid.Size.BIG, new Point(-200,230), new Vector(-50f,50f));
+				new Asteroid(Asteroid.Size.BIG, new Point(80,-250), new Vector(-50f,-50f));
+				new Asteroid(Asteroid.Size.MED, new Point(100,100), new Vector(-50f,50f));
+				break;
+			case 1:
+				new Asteroid(Asteroid.Size.BIG, new Point(200,200), new Vector(50f,50f));
+				new Asteroid(Asteroid.Size.MED, new Point(100,100), new Vector(50f,-50f));
+				new Asteroid(Asteroid.Size.BIG, new Point(-200,-10), new Vector(-50f,50f));
+				new Asteroid(Asteroid.Size.MED, new Point(-80,250), new Vector(-50f,-50f));
+				new Asteroid(Asteroid.Size.MED, new Point(-100,100), new Vector(-50f,50f));
+				break;
+			case 2:
+				new Asteroid(Asteroid.Size.BIG, new Point(50,200), new Vector(50f,50f));
+				new Asteroid(Asteroid.Size.MED, new Point(100,220), new Vector(50f,-50f));
+				new Asteroid(Asteroid.Size.BIG, new Point(-100,-70), new Vector(-50f,-50f));
+				new Asteroid(Asteroid.Size.MED, new Point(-80,150), new Vector(-50f,-50f));
+				new Asteroid(Asteroid.Size.MED, new Point(-120,100), new Vector(50f,50f));
+				new Asteroid(Asteroid.Size.BIG, new Point(-30,60), new Vector(-50f,50f));
+				break;
 		}
 	}
 
