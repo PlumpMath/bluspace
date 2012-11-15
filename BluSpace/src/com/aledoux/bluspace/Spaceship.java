@@ -80,6 +80,16 @@ public class Spaceship extends GameObject {
 		
 		//collisions
 		collisions();
+		
+		//create exhaust
+		int color = 0;
+		if (ID == 1){
+			color = Color.argb(255, 255, 0, 0);
+		}
+		else{
+			color = Color.argb(255, 0, 255, 0);
+		}
+		new ExhaustParticle(5,color,pos.translate(heading.mult(-1 * sprite.getHeight() * 0.5f)),velocity.mult(-1));
 	}
 	
 	public void collisions(){
@@ -114,12 +124,7 @@ public class Spaceship extends GameObject {
 	}
 
 	@Override
-	public void render(Canvas canvas) {
-		//draw "exhaust"
-		if (enginesRunning){
-			(new CircleSprite(10,Color.argb(255,255,0,0))).draw(canvas, pos.translate(heading.mult(-15)));
-		}
-		
+	public void render(Canvas canvas) {		
 		sprite.draw(canvas,pos);
 	}
 	

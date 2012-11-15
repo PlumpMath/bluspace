@@ -277,7 +277,8 @@ public class BluetoothChat extends Activity implements OnClickListener {
         				logic.myID = 1;
         				logic.opponentID = 2;
         				logic.backgroundCase = (int) (Math.random() * 3);
-        				logic.asteroidCase = (int) (Math.random() * 3);
+        				//logic.asteroidCase = (int) (Math.random() * 3);
+        				logic.asteroidCase = 3; //no asteroids right now it's broken
         			}
         			GameState.State().Restart(logic);
                     break;

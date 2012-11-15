@@ -253,6 +253,9 @@ public class MultiplayerGameLogic extends LogicObject {
 				new Asteroid(Asteroid.Size.MED, new Point(-120,100), new Vector(50f,50f));
 				new Asteroid(Asteroid.Size.BIG, new Point(-30,60), new Vector(-50f,50f));
 				break;
+			case 3:
+				//no asteroids :(
+				break;
 		}
 	}
 	

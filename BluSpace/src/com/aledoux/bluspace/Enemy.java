@@ -9,7 +9,7 @@ public class Enemy extends GameObject {
 	
 	public Enemy(Point pos){
 		this.pos = pos;
-		this.sprite = new BitmapSprite(R.drawable.spaceship);
+		this.sprite = new BitmapSprite(R.drawable.spaceship_sml);
 		shootTime = 0f;
 		shootInterval = 1.2f;
 	}
